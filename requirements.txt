@@ -1,0 +1,12 @@
+# Core pipeline
+openpyxl>=3.1.0
+beautifulsoup4>=4.12.0
+lxml>=4.9.0
+PyYAML>=6.0
+
+# Optional: only if you use helper QC scripts that OCR rotated table images
+# rapidocr-onnxruntime>=1.3.0
+# pillow>=10.0.0
+
+# MinerU itself is installed separately — see README.
+# https://github.com/opendatalab/MinerU

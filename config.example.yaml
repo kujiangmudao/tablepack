@@ -1,0 +1,35 @@
+# Copy to config.yaml and edit for your machine.
+# config.yaml is gitignored — never commit machine-specific secrets/paths.
+
+# Project root (default: current working directory)
+# root: .
+
+# Source PDFs
+pdf_dir: pdf
+
+# Deliverable packages
+output_dir: output
+
+# MinerU raw parse cache
+work_dir: work/mineru_raw
+
+# MinerU CLI (or set env MINERU_BIN / PDF_EXCEL_MINERU)
+# Windows example:
+# mineru_bin: D:/mineru-work/mineru-env/Scripts/mineru.exe
+# Linux/macOS example:
+# mineru_bin: /usr/local/bin/mineru
+
+# Optional Python for helper scripts
+# python_bin: python
+
+# MinerU options
+backend: pipeline   # pipeline | vlm | hybrid (depends on your MinerU install)
+method: auto
+language: ch
+enable_table: true
+enable_formula: false
+
+# Pipeline behavior
+drop_empty_tables: true   # drop empty table_body (do not invent rows)
+skip_existing_excel: false
+wipe_output_package: true # rebuild output/<stem>/ each run

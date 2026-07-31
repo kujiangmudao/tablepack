@@ -1,0 +1,61 @@
+# --- secrets & local machine config ---
+config.yaml
+.env
+.env.*
+
+# --- private corpora (DO NOT commit copyrighted PDFs / batch outputs) ---
+pdf/**
+!pdf/.gitkeep
+!pdf/README.md
+output/**
+!output/.gitkeep
+!output/README.md
+work/**
+!work/.gitkeep
+
+# Batch zips / large archives
+*.zip
+*.7z
+*.rar
+
+# Local-only QC fix scripts that may contain private table data
+# (keep generic examples under examples/)
+fix_batch*.py
+fix_excels.py
+
+# --- Python ---
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+.eggs/
+dist/
+build/
+.venv/
+venv/
+.env/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# --- IDE / OS ---
+.idea/
+.vscode/
+*.swp
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# --- Agent local state (keep skills that live under skills/) ---
+.grok/
+.claude/
+.cursor/
+.codex/
+
+# --- misc ---
+*.log
+tmp/
+temp/
+.cache/
