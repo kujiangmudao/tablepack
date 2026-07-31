@@ -11,7 +11,7 @@
 > One PDF · one workbook · original table screenshots · QC notes · agent skill.  
 > Powered by [MinerU](https://github.com/opendatalab/MinerU).
 
-Repo directory name may still be `pdf-excel`; **product name is TablePack**.
+**Product & repo: [TablePack](https://github.com/kujiangmudao/tablepack)** · Python package import/CLI still use `pdf_excel` / `python -m pdf_excel`.
 
 ---
 
@@ -51,7 +51,7 @@ output/<name>/
 Install this repo and load the skill. Point `mineru_bin` only if `mineru` is not on `PATH`.
 
 ```bash
-git clone https://github.com/kujiangmudao/pdf-excel.git
+git clone https://github.com/kujiangmudao/tablepack.git
 cd pdf-excel
 pip install -r requirements.txt
 cp config.example.yaml config.yaml   # optional
@@ -65,7 +65,7 @@ python -m pdf_excel demo_sample
 Skill raw URL:
 
 ```text
-https://raw.githubusercontent.com/kujiangmudao/pdf-excel/main/skills/pdf-table-to-excel/SKILL.md
+https://raw.githubusercontent.com/kujiangmudao/tablepack/main/skills/pdf-table-to-excel/SKILL.md
 ```
 
 ### Path B — No MinerU yet (isolated one-shot setup)
@@ -75,7 +75,7 @@ Official MinerU goes into a **project-local venv** (`.venv-mineru`). Safe: does 
 **Windows (PowerShell)**
 
 ```powershell
-git clone https://github.com/kujiangmudao/pdf-excel.git
+git clone https://github.com/kujiangmudao/tablepack.git
 cd pdf-excel
 powershell -ExecutionPolicy Bypass -File scripts\install_mineru.ps1
 .\.venv-mineru\Scripts\Activate.ps1
@@ -85,7 +85,7 @@ python -m pdf_excel --dry-config
 **Linux / macOS**
 
 ```bash
-git clone https://github.com/kujiangmudao/pdf-excel.git
+git clone https://github.com/kujiangmudao/tablepack.git
 cd pdf-excel
 chmod +x scripts/install_mineru.sh
 ./scripts/install_mineru.sh

@@ -1,10 +1,18 @@
 # Changelog
 
+## 0.2.1 — 2026-07-31
+
+### Changed
+
+- GitHub repository renamed: `pdf-excel` → **`tablepack`**
+  - https://github.com/kujiangmudao/tablepack
+  - Old URL redirects on GitHub when possible; update bookmarks/clones to the new name
+
 ## 0.2.0 — 2026-07-31
 
 ### Added
 
-- Product name **TablePack** (repo may still be `pdf-excel`)
+- Product name **TablePack**
 - Dual install paths in README + `docs/INSTALL.md`
   - Path A: existing MinerU users → skill/CLI directly
   - Path B: `scripts/install_mineru.ps1` / `scripts/install_mineru.sh` (isolated `.venv-mineru`)

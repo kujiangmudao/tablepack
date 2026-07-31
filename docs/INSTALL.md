@@ -1,6 +1,6 @@
 # Install guide — two paths
 
-**Product name: TablePack** · Repo folder may still show as `pdf-excel`.
+**Product & repo: [TablePack](https://github.com/kujiangmudao/tablepack)** · CLI: `python -m pdf_excel`
 
 Choose your path:
 
@@ -15,7 +15,7 @@ Choose your path:
 You only need this repo + the agent skill.
 
 ```bash
-git clone https://github.com/kujiangmudao/pdf-excel.git
+git clone https://github.com/kujiangmudao/tablepack.git
 cd pdf-excel
 pip install -r requirements.txt
 cp config.example.yaml config.yaml
@@ -26,7 +26,7 @@ cp config.example.yaml config.yaml
 
 1. Open this repo as the workspace.
 2. Load skill: `skills/pdf-table-to-excel/SKILL.md`  
-   Raw: https://raw.githubusercontent.com/kujiangmudao/pdf-excel/main/skills/pdf-table-to-excel/SKILL.md
+   Raw: https://raw.githubusercontent.com/kujiangmudao/tablepack/main/skills/pdf-table-to-excel/SKILL.md
 3. Say: `转表格` / `再转一批` / `/pdf-table-to-excel`
 
 **CLI**
@@ -53,7 +53,7 @@ Scripts create a **dedicated virtualenv** `.venv-mineru` (does not overwrite you
 ### Windows (PowerShell)
 
 ```powershell
-git clone https://github.com/kujiangmudao/pdf-excel.git
+git clone https://github.com/kujiangmudao/tablepack.git
 cd pdf-excel
 powershell -ExecutionPolicy Bypass -File scripts\install_mineru.ps1
 .\.venv-mineru\Scripts\Activate.ps1
@@ -63,7 +63,7 @@ python -m pdf_excel --dry-config
 ### Linux / macOS
 
 ```bash
-git clone https://github.com/kujiangmudao/pdf-excel.git
+git clone https://github.com/kujiangmudao/tablepack.git
 cd pdf-excel
 chmod +x scripts/install_mineru.sh
 ./scripts/install_mineru.sh

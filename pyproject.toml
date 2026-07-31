@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "pdf-excel"
-version = "0.2.0"
+version = "0.2.1"
 description = "TablePack: PDF tables to multi-sheet Excel packages with original table screenshots, QC notes, and agent skill (MinerU)"
 readme = "README.md"
 requires-python = ">=3.10"
@@ -42,8 +42,8 @@ dev = ["pytest>=7.0"]
 pdf-excel = "pdf_excel.cli:main"
 
 [project.urls]
-Homepage = "https://github.com/kujiangmudao/pdf-excel"
-Issues = "https://github.com/kujiangmudao/pdf-excel/issues"
+Homepage = "https://github.com/kujiangmudao/tablepack"
+Issues = "https://github.com/kujiangmudao/tablepack/issues"
 MinerU = "https://github.com/opendatalab/MinerU"
 
 [tool.setuptools.packages.find]

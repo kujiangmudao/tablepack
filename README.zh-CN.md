@@ -11,7 +11,7 @@
 > 一 PDF 一表簿 · 原始表格截图 · 成败说明 · Agent Skill  
 > 解析引擎：[MinerU](https://github.com/opendatalab/MinerU)
 
-仓库文件夹可能仍显示 `pdf-excel`，**产品名统一为 TablePack**。
+**产品与仓库：[TablePack](https://github.com/kujiangmudao/tablepack)** · Python 包名/命令仍为 `pdf_excel` / `python -m pdf_excel`。
 
 ---
 
@@ -47,7 +47,7 @@ output/<文件名>/
 只需本仓库 + skill。
 
 ```bash
-git clone https://github.com/kujiangmudao/pdf-excel.git
+git clone https://github.com/kujiangmudao/tablepack.git
 cd pdf-excel
 pip install -r requirements.txt
 cp config.example.yaml config.yaml   # 可选；mineru 不在 PATH 时填 mineru_bin
@@ -65,7 +65,7 @@ python -m pdf_excel demo_sample
 Raw：
 
 ```text
-https://raw.githubusercontent.com/kujiangmudao/pdf-excel/main/skills/pdf-table-to-excel/SKILL.md
+https://raw.githubusercontent.com/kujiangmudao/tablepack/main/skills/pdf-table-to-excel/SKILL.md
 ```
 
 ### 路径 B — 还没有 MinerU（一键隔离安装）
@@ -76,7 +76,7 @@ https://raw.githubusercontent.com/kujiangmudao/pdf-excel/main/skills/pdf-table-t
 **Windows（PowerShell）**
 
 ```powershell
-git clone https://github.com/kujiangmudao/pdf-excel.git
+git clone https://github.com/kujiangmudao/tablepack.git
 cd pdf-excel
 powershell -ExecutionPolicy Bypass -File scripts\install_mineru.ps1
 .\.venv-mineru\Scripts\Activate.ps1
@@ -86,7 +86,7 @@ python -m pdf_excel --dry-config
 **Linux / macOS**
 
 ```bash
-git clone https://github.com/kujiangmudao/pdf-excel.git
+git clone https://github.com/kujiangmudao/tablepack.git
 cd pdf-excel
 chmod +x scripts/install_mineru.sh
 ./scripts/install_mineru.sh
