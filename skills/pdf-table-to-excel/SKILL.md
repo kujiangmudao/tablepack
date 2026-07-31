@@ -18,8 +18,10 @@ Product name **TablePack**; CLI module remains `python -m pdf_excel`.
 
 | Path | Action before convert |
 |------|------------------------|
-| **A — already has MinerU** | Confirm `mineru` on PATH or `config.yaml` → `mineru_bin`. Then run pipeline. |
-| **B — no MinerU** | Windows: `scripts/install_mineru.ps1` · Unix: `scripts/install_mineru.sh`. Activate `.venv-mineru`. See `docs/INSTALL.md`. |
+| **A — already has MinerU** | Confirm `mineru` on PATH or `config.yaml` → `mineru_bin`. **Do not require the user to learn MinerU CLI** — only run TablePack. |
+| **B — no MinerU** | Windows: `scripts/install_mineru.ps1` · Unix: `scripts/install_mineru.sh`. Activate `.venv-mineru`. See `docs/INSTALL.md`. Still **no MinerU tutorial** — only `python -m pdf_excel`. |
+
+**Product promise:** install MinerU (or Path B), put PDFs in `pdf/`, one command packages Excel + `原始表格/` + notes.
 
 ## Model requirement (critical)
 

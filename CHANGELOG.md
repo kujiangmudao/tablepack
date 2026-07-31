@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.2.2 — 2026-08-01
+
+### Docs
+
+- Spotlight promise: **install MinerU → one-click package; no MinerU usage tutorial required**
+- Fix clone `cd` path to `tablepack` after rename
+
 ## 0.2.1 — 2026-07-31
 
 ### Changed

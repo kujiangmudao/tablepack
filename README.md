@@ -9,9 +9,20 @@
 
 > **PDF tables → multi-sheet Excel packages you can actually accept.**  
 > One PDF · one workbook · original table screenshots · QC notes · agent skill.  
-> Powered by [MinerU](https://github.com/opendatalab/MinerU).
+> Powered by [MinerU](https://github.com/opendatalab/MinerU) — **you do not need to learn MinerU**.
 
 **Product & repo: [TablePack](https://github.com/kujiangmudao/tablepack)** · Python package import/CLI still use `pdf_excel` / `python -m pdf_excel`.
+
+### Zero MinerU learning curve
+
+TablePack **calls MinerU for you**. After MinerU is installed (or after Path B one-shot setup):
+
+1. Put PDFs in `pdf/`
+2. Run **one command**: `python -m pdf_excel`
+3. Open `output/` — Excel + `原始表格/` screenshots + notes
+
+You do **not** need to study MinerU CLI flags, backends, `content_list` JSON, or export formats.  
+Those details stay inside TablePack. (Optional: advanced users may still tune `config.yaml`.)
 
 ---
 
@@ -22,6 +33,7 @@
 | Tables out of PDFs | **One Excel per PDF**, one sheet per table |
 | Proof for review | **`原始表格/`** crops next to every package |
 | Trustworthy automation | Empty/broken tables → notes, **never invent cells** |
+| No MinerU homework | **Install once → one-click package**; no MinerU tutorial required |
 | AI agents that follow SOP | Ready skill: `skills/pdf-table-to-excel/` |
 
 ```text
@@ -46,18 +58,18 @@ output/<name>/
 
 ## Choose your path
 
-### Path A — You already use MinerU
+### Path A — MinerU already installed
 
-Install this repo and load the skill. Point `mineru_bin` only if `mineru` is not on `PATH`.
+You only need this repo. **No need to re-learn or reconfigure MinerU** — TablePack finds `mineru` on `PATH` (or read `mineru_bin` from config).
 
 ```bash
 git clone https://github.com/kujiangmudao/tablepack.git
-cd pdf-excel
+cd tablepack
 pip install -r requirements.txt
-cp config.example.yaml config.yaml   # optional
+cp config.example.yaml config.yaml   # optional; only if mineru is not on PATH
 
 # Agent: open this repo + load skills/pdf-table-to-excel/SKILL.md
-# CLI:
+# One-click convert:
 cp examples/demo/demo_sample.pdf pdf/
 python -m pdf_excel demo_sample
 ```
@@ -68,15 +80,16 @@ Skill raw URL:
 https://raw.githubusercontent.com/kujiangmudao/tablepack/main/skills/pdf-table-to-excel/SKILL.md
 ```
 
-### Path B — No MinerU yet (isolated one-shot setup)
+### Path B — No MinerU yet (install + convert, still no MinerU tutorial)
 
-Official MinerU goes into a **project-local venv** (`.venv-mineru`). Safe: does not replace your system Python packages.
+One script installs official MinerU into a **project-local venv** (`.venv-mineru`) and wires `config.yaml`.  
+After that you only run TablePack — **not** the MinerU CLI by hand.
 
 **Windows (PowerShell)**
 
 ```powershell
 git clone https://github.com/kujiangmudao/tablepack.git
-cd pdf-excel
+cd tablepack
 powershell -ExecutionPolicy Bypass -File scripts\install_mineru.ps1
 .\.venv-mineru\Scripts\Activate.ps1
 python -m pdf_excel --dry-config
@@ -86,7 +99,7 @@ python -m pdf_excel --dry-config
 
 ```bash
 git clone https://github.com/kujiangmudao/tablepack.git
-cd pdf-excel
+cd tablepack
 chmod +x scripts/install_mineru.sh
 ./scripts/install_mineru.sh
 source .venv-mineru/bin/activate

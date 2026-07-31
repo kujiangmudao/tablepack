@@ -2,6 +2,17 @@
 
 **Product & repo: [TablePack](https://github.com/kujiangmudao/tablepack)** · CLI: `python -m pdf_excel`
 
+## Promise: no MinerU tutorial required
+
+TablePack **wraps MinerU**. After MinerU is present on the machine:
+
+- Put PDFs in `pdf/`
+- Run `python -m pdf_excel`
+- Collect packages under `output/`
+
+You do **not** need to learn MinerU CLI usage, flags, or intermediate JSON.  
+(Path B even installs MinerU for you into an isolated venv.)
+
 Choose your path:
 
 | You already have MinerU CLI | You do **not** have MinerU yet |
@@ -12,11 +23,11 @@ Choose your path:
 
 ## Path A — Already have MinerU
 
-You only need this repo + the agent skill.
+You only need this repo + the agent skill. **Knowing how to use MinerU by hand is optional.**
 
 ```bash
 git clone https://github.com/kujiangmudao/tablepack.git
-cd pdf-excel
+cd tablepack
 pip install -r requirements.txt
 cp config.example.yaml config.yaml
 # set mineru_bin to your mineru executable if it is not on PATH
@@ -50,11 +61,13 @@ mineru_bin: C:/path/to/mineru.exe   # or /usr/local/bin/mineru
 
 Scripts create a **dedicated virtualenv** `.venv-mineru` (does not overwrite your system site-packages), install the **official** `mineru[all]` package, install this project’s deps, and write `config.yaml`.
 
+After setup you still **only run TablePack** — no separate MinerU workflow to memorize.
+
 ### Windows (PowerShell)
 
 ```powershell
 git clone https://github.com/kujiangmudao/tablepack.git
-cd pdf-excel
+cd tablepack
 powershell -ExecutionPolicy Bypass -File scripts\install_mineru.ps1
 .\.venv-mineru\Scripts\Activate.ps1
 python -m pdf_excel --dry-config
@@ -64,7 +77,7 @@ python -m pdf_excel --dry-config
 
 ```bash
 git clone https://github.com/kujiangmudao/tablepack.git
-cd pdf-excel
+cd tablepack
 chmod +x scripts/install_mineru.sh
 ./scripts/install_mineru.sh
 source .venv-mineru/bin/activate
