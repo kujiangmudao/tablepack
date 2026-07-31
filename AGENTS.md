@@ -1,13 +1,20 @@
-# pdf-excel — Agent / operator rules (must follow)
+# TablePack (pdf-excel) — Agent / operator rules (must follow)
 
-This project turns **PDF tables → Excel packages** using **MinerU**.  
+**Product name: TablePack.** Turns **PDF tables → Excel packages** using **MinerU**.  
 When the user asks to convert PDFs, **always** follow this file + `skills/pdf-table-to-excel/SKILL.md`.
+
+## Two user paths
+
+| User | What to do |
+|------|------------|
+| **Already has MinerU** | Use this repo + skill; ensure `mineru` on PATH or `config.yaml` → `mineru_bin` |
+| **No MinerU yet** | Run `scripts/install_mineru.ps1` (Windows) or `scripts/install_mineru.sh` (Unix), activate `.venv-mineru`, then same skill/CLI. See `docs/INSTALL.md` |
 
 ## Multimodal requirement
 
 - **Auto pipeline** (`python -m pdf_excel`): text/CLI is enough.
 - **Quality control / sheet repair**: **requires a vision-capable model** that can open `原始表格/` screenshots (or PDF pages).
-- Text-only models (some free OpenCode backends): may run packaging, but **must not** claim visual QC was done; ask user to re-run QC with multimodal or review manually.
+- Text-only models: may run packaging, but **must not** claim visual QC was done.
 
 ## Environment
 
@@ -19,10 +26,10 @@ Resolve paths via (in order): CLI flags → env vars → `config.yaml` → defau
 | Output packages | `output/` |
 | MinerU cache | `work/mineru_raw/` |
 | MinerU CLI | `MINERU_BIN` or `config.yaml` → `mineru_bin` (auto-discover if on PATH) |
-| Backend | `pipeline` (CPU-friendly); tables on (`-t true`); language `ch` unless configured |
+| Backend | `pipeline` by default; tables on (`-t true`); language `ch` unless configured |
 | Code entry | `python -m pdf_excel` or `convert_pipeline.py` |
 
-Local machine tip: copy `config.example.yaml` → `config.yaml` (gitignored).
+Local machine tip: Path B writes `config.yaml`; or copy `config.example.yaml` (gitignored).
 
 ## Hard requirements (never skip)
 

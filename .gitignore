@@ -32,6 +32,7 @@ __pycache__/
 dist/
 build/
 .venv/
+.venv-mineru/
 venv/
 .env/
 .pytest_cache/
@@ -57,6 +58,7 @@ desktop.ini
 # --- Local staging (screenshots / notes before copy into docs/assets) ---
 问题/
 gh贴图/
+docs/mineru_discussion_draft.md
 
 # --- misc ---
 *.log

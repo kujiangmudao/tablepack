@@ -4,8 +4,8 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "pdf-excel"
-version = "0.1.2"
-description = "MinerU-based PDF table extraction to multi-sheet Excel packages with original table screenshots and QC notes"
+version = "0.2.0"
+description = "TablePack: PDF tables to multi-sheet Excel packages with original table screenshots, QC notes, and agent skill (MinerU)"
 readme = "README.md"
 requires-python = ">=3.10"
 license = { text = "MIT" }

@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.2.0 — 2026-07-31
+
+### Added
+
+- Product name **TablePack** (repo may still be `pdf-excel`)
+- Dual install paths in README + `docs/INSTALL.md`
+  - Path A: existing MinerU users → skill/CLI directly
+  - Path B: `scripts/install_mineru.ps1` / `scripts/install_mineru.sh` (isolated `.venv-mineru`)
+- Strengths-focused MinerU Discussion update
+
 ## 0.1.2 — 2026-07-31
 
 ### Added (growth / onboarding)

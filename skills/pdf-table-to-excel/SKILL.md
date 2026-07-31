@@ -1,33 +1,38 @@
 ---
 name: pdf-table-to-excel
 description: >
-  Convert PDF tables to multi-sheet Excel packages with MinerU: original table
-  screenshots, figures, QC notes, no fabricated data. Use in this repo for any
-  PDF→Excel / batch table extraction / visual table QC task.
-  REQUIRES multimodal/vision model for QC (must open 原始表格/*.jpg images).
+  TablePack: Convert PDF tables to multi-sheet Excel packages with MinerU —
+  original table screenshots, figures, QC notes, no fabricated data.
+  Path A: existing MinerU users. Path B: run scripts/install_mineru.* first.
+  REQUIRES multimodal/vision model for QC (open 原始表格/*.jpg).
   Triggers: 转表格, 转excel, 转Excel, PDF表格, pdf转excel, mineru, 原始表格,
-  批量转换, 继续转, 再转一批, 表格转excel, /pdf-table-to-excel
+  批量转换, 继续转, 再转一批, 表格转excel, TablePack, /pdf-table-to-excel
 ---
 
-# PDF tables → Excel (MinerU packaging pipeline)
+# TablePack — PDF tables → Excel packages
 
-**Read root `AGENTS.md` first** for hard rules. This skill is the executable checklist.
+**Read root `AGENTS.md` first.** This skill is the executable checklist.  
+Product name **TablePack**; CLI module remains `python -m pdf_excel`.
+
+## Who is the user?
+
+| Path | Action before convert |
+|------|------------------------|
+| **A — already has MinerU** | Confirm `mineru` on PATH or `config.yaml` → `mineru_bin`. Then run pipeline. |
+| **B — no MinerU** | Windows: `scripts/install_mineru.ps1` · Unix: `scripts/install_mineru.sh`. Activate `.venv-mineru`. See `docs/INSTALL.md`. |
 
 ## Model requirement (critical)
 
 | Stage | Needs vision? | Why |
 |-------|---------------|-----|
-| Run `python -m pdf_excel` | No | CLI + MinerU text/HTML path |
-| **QC / fix sheets** | **Yes — multimodal required** | Must **open and read** `原始表格/*.jpg` (or PDF page renders) and compare cells to Excel |
+| Run `python -m pdf_excel` | No | CLI + MinerU HTML path |
+| **QC / fix sheets** | **Yes — multimodal** | Open `原始表格/*.jpg` and compare to Excel |
 
-If the current model **cannot see images** (text-only):
+If the model **cannot see images**:
 
-1. Still run the automatic pipeline and package notes.
-2. **Do not claim** “已严格质检 / 已对照原表”.
-3. Tell the user QC needs a **vision-capable** model (or human review).
-4. Prefer stopping after packaging rather than inventing fixes from HTML alone.
-
-OpenCode / free text models: good for orchestration; switch to multimodal for step 5.
+1. Still run packaging.
+2. **Do not claim** “已严格质检”.
+3. Ask for a vision-capable model or human review for QC.
 
 ## Environment (portable)
 
@@ -39,7 +44,7 @@ Prefer `config.yaml` / env / CLI — do **not** hardcode another machine’s pat
 | PDFs | `pdf/` |
 | Output | `output/` |
 | MinerU cache | `work/mineru_raw/` |
-| MinerU | `MINERU_BIN` or auto-discover on PATH |
+| MinerU | `config.yaml` / `MINERU_BIN` / PATH / `.venv-mineru` |
 
 Recommended MinerU flags (also set in config):
 
