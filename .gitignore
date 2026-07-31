@@ -54,6 +54,10 @@ desktop.ini
 .cursor/
 .codex/
 
+# --- Local staging (screenshots / notes before copy into docs/assets) ---
+问题/
+gh贴图/
+
 # --- misc ---
 *.log
 tmp/

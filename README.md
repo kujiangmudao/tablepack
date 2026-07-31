@@ -3,162 +3,152 @@
 [![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![MinerU](https://img.shields.io/badge/parser-MinerU-green.svg)](https://github.com/opendatalab/MinerU)
+[![Agent Skill](https://img.shields.io/badge/agent-skill-purple.svg)](skills/pdf-table-to-excel/SKILL.md)
 
-**PDF tables to multi-sheet Excel packages**, powered by [MinerU](https://github.com/opendatalab/MinerU), with **original table screenshots**, figure assets, and **honest QC notes**.
+**中文说明 → [README.zh-CN.md](README.zh-CN.md)**
 
-Not just "dump CSV and pray." This project encodes a **deliverable workflow** used on real multi-batch academic/technical PDFs:
+### PDF tables → deliverable Excel packages (for humans **and** AI agents)
 
-> one PDF → one Excel (all tables as sheets) → folder with `原始表格/` + `图片/` + `转换说明.md` / `问题说明.md` → **mandatory visual QC**.
+Turn academic / technical PDFs into **reviewable** outputs—not a lonely CSV:
 
-Also ships as an **AI agent skill** (`skills/pdf-table-to-excel/`) so coding agents follow the same rules every batch.
-
----
-
-## Why this exists
-
-| Common tools | This project |
-|--------------|--------------|
-| Camelot / Tabula → CSV/xlsx | Full **package layout** for human review |
-| MinerU → Markdown/JSON | MinerU tables → **Excel + screenshots + notes** |
-| Auto-only pipelines | **QC checklist** + "no fabricated rows" policy |
+| Pain | What you get |
+|------|----------------|
+| Tables locked in PDFs | One workbook per PDF, **one sheet per table** |
+| Hard to verify OCR | **`原始表格/`** cropped table screenshots beside the xlsx |
+| Agents invent numbers | Policy: **document failures, never fabricate rows** |
 | One-off scripts | Reusable **CLI + config + agent skill** |
 
-Built from multi-batch production experience (complex Chinese theses, multi-level headers, empty MinerU nodes, cross-page tables, OCR oxide formulas like `Al2O3`, etc.).
+> **one PDF → one Excel → folder with screenshots + notes → visual QC**
+
+Powered by [MinerU](https://github.com/opendatalab/MinerU). Orchestration, packaging, and QC discipline live here.
 
 ---
 
-## Output package layout
+## See it in 10 seconds
 
-For each `foo.pdf`:
+**Original table crop** (from `原始表格/`):
+
+![Original table screenshot for visual QC](docs/assets/qc-original-table.png)
+
+**Excel sheet after packaging** (metadata + grid):
+
+![Excel sheet with title page and table grid](docs/assets/qc-excel-sheet.png)
 
 ```text
-output/foo/
-  ├── foo.xlsx           # all tables, one sheet each
-  ├── 原始表格/          # cropped table images for visual QC
-  ├── 图片/              # figures / charts from the PDF
-  └── 转换说明.md        # success note
-      or 问题说明.md     # partial/failed cases — never invent data
+output/<pdf_stem>/
+  ├── <pdf_stem>.xlsx      # all tables as sheets
+  ├── 原始表格/            # table crops for QC
+  ├── 图片/                # figures / charts
+  └── 转换说明.md | 问题说明.md
 ```
 
 ---
 
-## Requirements
-
-1. **Python 3.10+**
-2. **[MinerU](https://github.com/opendatalab/MinerU)** installed and on `PATH`, or set `mineru_bin` / `MINERU_BIN`
-3. Pipeline dependencies (this repo):
-
-```bash
-pip install -r requirements.txt
-# or editable install
-pip install -e .
-```
-
-> MinerU is a separate project with its own GPU/CPU backends. On CPU-only machines, `backend: pipeline` is the usual choice.
-
----
-
-## Quick start
+## Quick start (CLI)
 
 ```bash
 git clone https://github.com/kujiangmudao/pdf-excel.git
 cd pdf-excel
 pip install -r requirements.txt
 
-# configure paths (optional but recommended)
+# optional: machine-local paths
 cp config.example.yaml config.yaml
-# edit config.yaml → set mineru_bin if not on PATH
+# set mineru_bin if `mineru` is not on PATH
 
-# put PDFs here
-mkdir -p pdf
-cp /path/to/*.pdf pdf/
+# try the copyright-safe synthetic PDF (no private theses)
+cp examples/demo/demo_sample.pdf pdf/
+python -m pdf_excel demo_sample
 
-# convert
+# or drop your own PDFs into pdf/ then:
 python -m pdf_excel
-# or
-python convert_pipeline.py
-
-# filter by filename substring
-python -m pdf_excel 张珂 何建国
-
-# force re-parse with MinerU
-python -m pdf_excel --force
-
-# show resolved config
-python -m pdf_excel --dry-config
 ```
 
-Environment variables (override config):
+**Requirements:** Python 3.10+, [MinerU](https://github.com/opendatalab/MinerU) CLI, dependencies in `requirements.txt`.  
+CPU-friendly default: `backend: pipeline`.
 
-| Variable | Meaning |
-|----------|---------|
-| `MINERU_BIN` / `PDF_EXCEL_MINERU` | MinerU CLI path |
-| `PDF_EXCEL_PDF_DIR` | Source PDF directory |
-| `PDF_EXCEL_OUTPUT_DIR` | Output directory |
-| `PDF_EXCEL_WORK_DIR` | MinerU cache directory |
-| `PDF_EXCEL_BACKEND` | e.g. `pipeline` |
-| `PDF_EXCEL_LANG` | e.g. `ch` |
-| `PDF_EXCEL_CONFIG` | Path to YAML config |
+Prebuilt sample package (no MinerU needed to inspect layout):
+
+- [`examples/demo_output/demo_sample/`](examples/demo_output/demo_sample/)
+
+Regenerate demo PDF/package:
+
+```bash
+pip install reportlab pillow
+python examples/build_demo.py
+```
 
 ---
 
-## CLI options
+## Use the agent skill (OpenCode / Cursor / Claude / …)
+
+This repo ships a portable skill so agents run the **same SOP** every batch.
+
+| Item | Value |
+|------|--------|
+| Skill path | [`skills/pdf-table-to-excel/SKILL.md`](skills/pdf-table-to-excel/SKILL.md) |
+| Raw URL | https://raw.githubusercontent.com/kujiangmudao/pdf-excel/main/skills/pdf-table-to-excel/SKILL.md |
+| Repo rules | [`AGENTS.md`](AGENTS.md) |
+
+**OpenCode / install by GitHub**
+
+1. Clone or open this repository as the workspace (recommended: full pipeline + skill).
+2. Or point your skill installer at:
+   - repo: `kujiangmudao/pdf-excel`
+   - skill: `skills/pdf-table-to-excel`
+3. Triggers: `转表格`, `转excel`, `mineru`, `再转一批`, `/pdf-table-to-excel`, …
+
+### Multimodal note (important)
+
+| Stage | Vision needed? |
+|-------|----------------|
+| `python -m pdf_excel` packaging | No |
+| **QC: open `原始表格/*.jpg` and fix sheets** | **Yes** |
+
+Text-only models may run the CLI and write notes, but **must not** claim visual QC was done.
+
+---
+
+## Why not only Camelot / Tabula / plain MinerU?
+
+| Tooling | Typical end state | This project |
+|---------|-------------------|--------------|
+| Camelot / Tabula | CSV / xlsx | Full **folder deliverable** + screenshots |
+| MinerU alone | Markdown / JSON / HTML tables | Excel package + QC notes + agent rules |
+| Auto pipelines | “Looks fine” | Explicit **no fabricated data** policy |
+
+Real-world hard cases this workflow was built around: multi-level Chinese headers, empty MinerU `table_body` nodes, landscape tables, oxide OCR noise (`Al2O3`, `w/%`), multi-page splits.
+
+---
+
+## CLI cheat sheet
 
 ```text
-python -m pdf_excel [-h] [-c CONFIG] [--root ROOT]
-                    [--pdf-dir DIR] [--output-dir DIR] [--work-dir DIR]
-                    [--mineru PATH] [-b BACKEND] [-l LANG]
-                    [--force] [--keep-empty-tables] [--skip-existing]
-                    [--dry-config] [filters ...]
+python -m pdf_excel --dry-config
+python -m pdf_excel --force
+python -m pdf_excel --skip-existing
+python -m pdf_excel 关键词
 ```
 
 | Flag | Effect |
 |------|--------|
 | `--force` | Re-run MinerU even if cache exists |
-| `--keep-empty-tables` | Keep empty `table_body` nodes (default: drop them) |
+| `--keep-empty-tables` | Keep empty HTML tables (default: drop) |
 | `--skip-existing` | Skip packages that already have xlsx |
-| `filters` | Only process PDFs whose names contain any substring |
+
+Env overrides: `MINERU_BIN`, `PDF_EXCEL_PDF_DIR`, `PDF_EXCEL_OUTPUT_DIR`, `PDF_EXCEL_WORK_DIR`, … (see `config.example.yaml`).
 
 ---
 
-## Quality control (the hard part)
+## Quality control checklist
 
-Automation gets you ~70–90% of the way. **Deliverable quality** needs visual QC:
+Automation is ~70–90%. Delivery needs visual QC:
 
-1. Open `原始表格/表N_*.jpg` (or the PDF page)
-2. Compare headers, row/col counts, merged cells, numbers, symbols (`3₂`, `8#`, `Ro`…)
-3. Fix the sheet in Excel / openpyxl when wrong
-4. If unrecoverable → document in `问题说明.md` — **do not invent numbers**
+1. Open `原始表格/表N_*.jpg`
+2. Check headers, dimensions, merges, IDs, numbers
+3. Fix the sheet when wrong
+4. If unrecoverable → `问题说明.md` (no invented cells)
 
-### Agent / LLM note
-
-| Task | Model need |
-|------|------------|
-| Run CLI + package folders | Any coding agent |
-| **Compare sheets to table screenshots** | **Multimodal / vision** |
-
-Text-only models can still orchestrate MinerU and write notes, but they **cannot** honestly finish the QC step. The shipped skill (`skills/pdf-table-to-excel/`) states this explicitly.
-
-Full checklist: [docs/QC_CHECKLIST.md](docs/QC_CHECKLIST.md)  
-Architecture notes: [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)  
-Troubleshooting: [docs/TROUBLESHOOTING.md](docs/TROUBLESHOOTING.md)
-
----
-
-## Agent skill
-
-For Cursor / Claude / Grok / OpenCode / other agents:
-
-- Portable skill: [`skills/pdf-table-to-excel/SKILL.md`](skills/pdf-table-to-excel/SKILL.md)
-- Project hard rules: [`AGENTS.md`](AGENTS.md)
-
-Raw skill URL:
-
-```text
-https://raw.githubusercontent.com/kujiangmudao/pdf-excel/main/skills/pdf-table-to-excel/SKILL.md
-```
-
-Copy the skill into your agent's skills directory, or keep the repo as the working project so agents load `AGENTS.md` automatically.
+Details: [docs/QC_CHECKLIST.md](docs/QC_CHECKLIST.md) · [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) · [docs/TROUBLESHOOTING.md](docs/TROUBLESHOOTING.md)
 
 ---
 
@@ -166,61 +156,39 @@ Copy the skill into your agent's skills directory, or keep the repo as the worki
 
 ```text
 pdf-excel/
-├── pdf_excel/              # installable package
-│   ├── cli.py              # CLI
-│   ├── pipeline.py         # MinerU → package
-│   ├── html_table.py       # rowspan/colspan → grid
-│   ├── excel_writer.py
-│   ├── parse_mineru.py
-│   └── config.py
-├── convert_pipeline.py     # thin backward-compatible entry
-├── skills/pdf-table-to-excel/
-├── docs/
-├── examples/
-├── tests/
-├── config.example.yaml
+├── pdf_excel/                 # installable package
+├── convert_pipeline.py        # thin entry
+├── skills/pdf-table-to-excel/ # agent skill
+├── examples/demo/             # synthetic PDF
+├── examples/demo_output/      # sample package
+├── docs/assets/               # README screenshots
 ├── AGENTS.md
-└── README.md
+└── README.zh-CN.md
 ```
 
 ---
 
 ## What we deliberately do not do
 
-- Do **not** ship copyrighted sample PDFs (use your own)
-- Do **not** invent table rows when MinerU returns empty HTML
-- Do **not** claim 100% accuracy without visual QC
-- Do **not** replace MinerU's parser (we orchestrate + package + enforce QC)
+- Ship copyrighted theses as samples (use `examples/demo/` synthetic data)
+- Invent rows when MinerU returns empty HTML
+- Claim 100% accuracy without visual QC
+- Replace MinerU’s parser (we orchestrate + package + enforce QC)
 
 ---
 
-## Roadmap ideas
+## Star / contribute
 
-- [ ] Optional cross-page table merge heuristics
-- [ ] Structured issue taxonomy in notes (JSON + MD)
-- [ ] Fallback extractors (img2table / Camelot) for failed tables
-- [ ] Domain dictionaries (oxides, coal seam labels) as plugins
-- [ ] Simple HTML report for batch summaries
+If this helps your research desk, data pipeline, or agent workflow:
 
-PRs welcome — see [CONTRIBUTING.md](CONTRIBUTING.md).
-
----
-
-## Citation / acknowledgment
-
-- Document parsing: **[MinerU](https://github.com/opendatalab/MinerU)** (OpenDataLab)
-- Excel I/O: [openpyxl](https://openpyxl.readthedocs.io/)
-
-If this workflow helps your research or data engineering, star the repo and open issues with hard tables — those drive improvements.
-
----
+- Star the repo
+- Open an issue with a **redacted** hard table (HTML snippet or crop you can share)
+- PRs: see [CONTRIBUTING.md](CONTRIBUTING.md)
 
 ## License
 
-[MIT](LICENSE)
-
----
+[MIT](LICENSE) · Acknowledgments: [MinerU](https://github.com/opendatalab/MinerU), [openpyxl](https://openpyxl.readthedocs.io/)
 
 ## Disclaimer
 
-This tool assists extraction; **you** own the correctness of final data. Always verify against original PDFs before publication, regulatory, or commercial use.
+You own final data correctness. Always verify against the original PDF before publication or commercial use.

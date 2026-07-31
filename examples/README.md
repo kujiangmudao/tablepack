@@ -1,27 +1,38 @@
 # Examples
 
-## Expected package layout
+## Synthetic demo (safe to ship)
 
-See `sample_output_layout/` for a **structure-only** illustration (no real thesis data).
+| Path | What it is |
+|------|------------|
+| [`demo/demo_sample.pdf`](demo/demo_sample.pdf) | Tiny synthetic PDF with one oxide table (fictional numbers) |
+| [`demo_output/demo_sample/`](demo_output/demo_sample/) | Example deliverable package: xlsx + `原始表格/` + `转换说明.md` |
+| [`build_demo.py`](build_demo.py) | Regenerates the PDF and sample package |
 
-## Synthetic table HTML
+```bash
+# inspect package layout without MinerU
+ls examples/demo_output/demo_sample
 
-Unit tests under `tests/` exercise rowspan/colspan HTML → grid conversion without PDFs.
+# regenerate
+pip install reportlab pillow
+python examples/build_demo.py
+
+# run full pipeline on the demo PDF (needs MinerU)
+cp examples/demo/demo_sample.pdf pdf/
+python -m pdf_excel demo_sample
+```
+
+## README screenshots
+
+Product screenshots live in [`docs/assets/`](../docs/assets/):
+
+- `qc-original-table.png` — table crop as used for visual QC
+- `qc-excel-sheet.png` — multi-sheet Excel view after packaging
 
 ## Agent skill
 
-Copy or symlink:
+See [`skills/pdf-table-to-excel/SKILL.md`](../skills/pdf-table-to-excel/SKILL.md).
 
-```text
-skills/pdf-table-to-excel/SKILL.md
-```
+## Privacy
 
-into your agent’s skills directory, and keep the repo’s `AGENTS.md` in the project root when working here.
-
-## Private batch fix scripts
-
-Local one-off scripts such as `fix_batch3.py` often contain **private reconstructed tables**. They are **gitignored** on purpose. Prefer:
-
-1. Fixing upstream parsing/normalization in the package
-2. Adding synthetic tests
-3. Documenting the pitfall in `docs/TROUBLESHOOTING.md`
+Do **not** commit private theses under `pdf/` or production `output/`.  
+Local folders such as `gh贴图/` / `问题/` are for author staging and stay gitignored.

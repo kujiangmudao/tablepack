@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.1.2 — 2026-07-31
+
+### Added (growth / onboarding)
+
+- README pitch block + product screenshots under `docs/assets/`
+- Chinese README: `README.zh-CN.md`
+- Synthetic demo PDF + sample package: `examples/demo/`, `examples/demo_output/`
+- `examples/build_demo.py` to regenerate demo assets
+- Clearer agent-skill install links (raw URL + OpenCode notes)
+
 ## 0.1.1 — 2026-07-31
 
 ### Fixed
