@@ -12,7 +12,7 @@ Thanks for helping improve **pdf-excel**.
 ## Dev setup
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/pdf-excel.git
+git clone https://github.com/kujiangmudao/pdf-excel.git
 cd pdf-excel
 python -m venv .venv
 # Windows: .venv\Scripts\activate
