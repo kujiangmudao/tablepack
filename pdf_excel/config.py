@@ -57,6 +57,35 @@ def discover_python() -> Path:
     return Path(os.environ.get("PYTHON", "") or __import__("sys").executable)
 
 
+def _coerce_bool(value: Any, default: bool = False) -> bool:
+    if value is None:
+        return default
+    if isinstance(value, bool):
+        return value
+    if isinstance(value, (int, float)):
+        return bool(value)
+    if isinstance(value, str):
+        return value.strip().lower() in {"1", "true", "yes", "on", "y"}
+    return bool(value)
+
+
+def _resolve_under_root(root: Path, value: Path | str | None, default_rel: str | None) -> Path:
+    """
+    Resolve a path relative to *root* (not process cwd).
+
+    Absolute paths stay absolute. Relative paths and defaults join root first,
+    so running the CLI from another directory still hits the project tree.
+    """
+    if value is None:
+        if default_rel is None:
+            raise ValueError("path value and default_rel are both None")
+        return (root / default_rel).resolve()
+    p = Path(value)
+    if not p.is_absolute():
+        p = root / p
+    return p.resolve()
+
+
 @dataclass
 class Settings:
     """Project paths and MinerU options."""
@@ -80,13 +109,37 @@ class Settings:
     wipe_output_package: bool = True
 
     def resolve(self) -> "Settings":
-        root = self.root.resolve()
+        root = Path(self.root).expanduser()
+        if not root.is_absolute():
+            root = (Path.cwd() / root).resolve()
+        else:
+            root = root.resolve()
         self.root = root
-        self.pdf_dir = (self.pdf_dir or root / "pdf").resolve()
-        self.output_dir = (self.output_dir or root / "output").resolve()
-        self.work_dir = (self.work_dir or root / "work" / "mineru_raw").resolve()
-        self.mineru_bin = self.mineru_bin or discover_mineru()
-        self.python_bin = self.python_bin or discover_python()
+        self.pdf_dir = _resolve_under_root(root, self.pdf_dir, "pdf")
+        self.output_dir = _resolve_under_root(root, self.output_dir, "output")
+        self.work_dir = _resolve_under_root(root, self.work_dir, "work/mineru_raw")
+
+        if self.mineru_bin:
+            mb = Path(self.mineru_bin).expanduser()
+            if not mb.is_absolute():
+                mb = root / mb
+            self.mineru_bin = mb.resolve()
+        else:
+            self.mineru_bin = discover_mineru()
+
+        if self.python_bin:
+            pb = Path(self.python_bin).expanduser()
+            if not pb.is_absolute():
+                pb = root / pb
+            self.python_bin = pb.resolve()
+        else:
+            self.python_bin = discover_python()
+
+        self.enable_table = _coerce_bool(self.enable_table, True)
+        self.enable_formula = _coerce_bool(self.enable_formula, False)
+        self.drop_empty_tables = _coerce_bool(self.drop_empty_tables, True)
+        self.skip_existing_excel = _coerce_bool(self.skip_existing_excel, False)
+        self.wipe_output_package = _coerce_bool(self.wipe_output_package, True)
         return self
 
     def as_dict(self) -> dict[str, Any]:
@@ -157,10 +210,10 @@ def load_settings(
         s.mineru_bin = Path(raw["mineru_bin"])
     if raw.get("python_bin"):
         s.python_bin = Path(raw["python_bin"])
+    for key in ("backend", "method", "language"):
+        if key in raw and raw[key] is not None:
+            setattr(s, key, raw[key])
     for key in (
-        "backend",
-        "method",
-        "language",
         "enable_table",
         "enable_formula",
         "drop_empty_tables",
@@ -168,7 +221,7 @@ def load_settings(
         "wipe_output_package",
     ):
         if key in raw and raw[key] is not None:
-            setattr(s, key, raw[key])
+            setattr(s, key, _coerce_bool(raw[key]))
 
     # env overrides
     if env_path("PDF_EXCEL_ROOT"):

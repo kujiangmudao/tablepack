@@ -130,6 +130,15 @@ Automation gets you ~70–90% of the way. **Deliverable quality** needs visual Q
 3. Fix the sheet in Excel / openpyxl when wrong
 4. If unrecoverable → document in `问题说明.md` — **do not invent numbers**
 
+### Agent / LLM note
+
+| Task | Model need |
+|------|------------|
+| Run CLI + package folders | Any coding agent |
+| **Compare sheets to table screenshots** | **Multimodal / vision** |
+
+Text-only models can still orchestrate MinerU and write notes, but they **cannot** honestly finish the QC step. The shipped skill (`skills/pdf-table-to-excel/`) states this explicitly.
+
 Full checklist: [docs/QC_CHECKLIST.md](docs/QC_CHECKLIST.md)  
 Architecture notes: [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)  
 Troubleshooting: [docs/TROUBLESHOOTING.md](docs/TROUBLESHOOTING.md)

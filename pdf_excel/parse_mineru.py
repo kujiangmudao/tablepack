@@ -23,11 +23,25 @@ def find_content_list(auto_dir: Path) -> Path | None:
 
 
 def parse_content_list(content_list_path: Path) -> tuple[list[TableItem], list[ImageItem]]:
-    data = json.loads(content_list_path.read_text(encoding="utf-8"))
+    raw = json.loads(content_list_path.read_text(encoding="utf-8"))
+    if isinstance(raw, list):
+        data = raw
+    elif isinstance(raw, dict):
+        # Be defensive across MinerU export variants
+        data = raw.get("content_list") or raw.get("pdf_info") or raw.get("data") or []
+        if isinstance(data, dict):
+            data = data.get("content_list") or []
+        if not isinstance(data, list):
+            data = []
+    else:
+        data = []
+
     tables: list[TableItem] = []
     images: list[ImageItem] = []
     t_idx = 0
     for item in data:
+        if not isinstance(item, dict):
+            continue
         typ = item.get("type")
         page_idx = int(item.get("page_idx", 0) or 0)
         if typ == "table":

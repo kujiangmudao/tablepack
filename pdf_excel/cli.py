@@ -91,6 +91,10 @@ def main(argv: list[str] | None = None) -> int:
         print(json.dumps(settings.as_dict(), ensure_ascii=False, indent=2))
         return 0
 
+    if not settings.pdf_dir.is_dir():
+        print(f"PDF directory not found: {settings.pdf_dir}", file=sys.stderr)
+        return 1
+
     summary = run_batch(
         settings,
         force_mineru=args.force,
@@ -98,7 +102,10 @@ def main(argv: list[str] | None = None) -> int:
     )
     ok = sum(1 for r in summary if r.get("ok"))
     print(f"Done: {ok}/{len(summary)} packages OK", flush=True)
-    return 0 if summary and ok == len(summary) else (0 if summary else 1)
+    if not summary:
+        return 1
+    # Partial batch failure is a non-zero exit (CI / scripts can detect).
+    return 0 if ok == len(summary) else 2
 
 
 if __name__ == "__main__":

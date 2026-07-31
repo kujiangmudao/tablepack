@@ -43,14 +43,17 @@ def html_table_to_grid(table_html: str) -> tuple[list[list[str]], list[str]]:
         for cell in cells:
             while (r_idx, c_idx) in occupied:
                 c_idx += 1
-            try:
-                rowspan = max(1, int(cell.get("rowspan", 1) or 1))
-            except ValueError:
-                rowspan = 1
-            try:
-                colspan = max(1, int(cell.get("colspan", 1) or 1))
-            except ValueError:
-                colspan = 1
+            def _span(attr: str) -> int:
+                raw = cell.get(attr, 1)
+                try:
+                    # MinerU occasionally emits "2.0" or blank
+                    n = int(float(str(raw if raw not in (None, "") else 1)))
+                except (TypeError, ValueError):
+                    n = 1
+                return max(1, n)
+
+            rowspan = _span("rowspan")
+            colspan = _span("colspan")
 
             text = clean_cell_text(cell.get_text(separator=" ", strip=True))
 

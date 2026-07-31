@@ -3,6 +3,12 @@
 This project turns **PDF tables → Excel packages** using **MinerU**.  
 When the user asks to convert PDFs, **always** follow this file + `skills/pdf-table-to-excel/SKILL.md`.
 
+## Multimodal requirement
+
+- **Auto pipeline** (`python -m pdf_excel`): text/CLI is enough.
+- **Quality control / sheet repair**: **requires a vision-capable model** that can open `原始表格/` screenshots (or PDF pages).
+- Text-only models (some free OpenCode backends): may run packaging, but **must not** claim visual QC was done; ask user to re-run QC with multimodal or review manually.
+
 ## Environment
 
 Resolve paths via (in order): CLI flags → env vars → `config.yaml` → defaults.

@@ -16,10 +16,17 @@ from .models import TableItem
 
 
 def sanitize_sheet_name(name: str, used: set[str]) -> str:
-    name = re.sub(r"[:\\/?*\[\]]", "_", name)
-    name = name.strip() or "Table"
+    # Excel forbids: : \ / ? * [ ] and names longer than 31; also avoid leading/trailing '
+    name = re.sub(r"[:\\/?*\[\]]", "_", name or "")
+    name = name.replace("\x00", "")
+    name = name.strip(" '\"\t\r\n") or "Table"
     if len(name) > 31:
-        name = name[:31]
+        name = name[:31].rstrip(" '\"")
+    if not name:
+        name = "Table"
+    # Excel reserves the name "History" in some contexts — avoid collision quietly
+    if name.lower() == "history":
+        name = "History_"
     base = name
     i = 1
     while name in used:

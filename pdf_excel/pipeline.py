@@ -62,12 +62,25 @@ def run_mineru(settings: Settings, pdf_path: Path) -> int:
     return proc.returncode
 
 
-def _resolve_img(auto_dir: Path, rel: str) -> Path | None:
-    src = auto_dir / rel
+def _resolve_img(auto_dir: Path, rel: str | None) -> Path | None:
+    if not rel:
+        return None
+    # MinerU usually emits forward slashes; normalize for Windows.
+    rel_norm = str(rel).replace("\\", "/").lstrip("./")
+    src = auto_dir / Path(rel_norm)
     if src.exists():
         return src
-    alt = auto_dir / "images" / Path(rel).name
-    return alt if alt.exists() else None
+    alt = auto_dir / "images" / Path(rel_norm).name
+    if alt.exists():
+        return alt
+    # Last resort: basename search under auto/images
+    images_dir = auto_dir / "images"
+    name = Path(rel_norm).name
+    if images_dir.is_dir() and name:
+        hit = images_dir / name
+        if hit.exists():
+            return hit
+    return None
 
 
 def write_notes(
@@ -141,6 +154,7 @@ def write_notes(
 
 
 def package_output(settings: Settings, pdf_path: Path, force_mineru: bool = False) -> dict[str, Any]:
+    pdf_path = Path(pdf_path)
     stem = pdf_path.stem
     result: dict[str, Any] = {
         "pdf": pdf_path.name,
@@ -151,6 +165,10 @@ def package_output(settings: Settings, pdf_path: Path, force_mineru: bool = Fals
         "dropped_empty": 0,
         "issues": [],
     }
+
+    if not pdf_path.is_file():
+        result["issues"].append(f"PDF 文件不存在: {pdf_path}")
+        return result
 
     out_dir = settings.output_dir / stem
     xlsx_path = out_dir / f"{stem}.xlsx"
@@ -290,13 +308,18 @@ def run_batch(
 ) -> list[dict[str, Any]]:
     settings.output_dir.mkdir(parents=True, exist_ok=True)
     if pdfs is None:
+        if not settings.pdf_dir.is_dir():
+            print(f"PDF directory not found: {settings.pdf_dir}", flush=True)
+            return []
         pdfs = sorted(settings.pdf_dir.glob("*.pdf"))
+        # Also accept uppercase extension on case-sensitive FS
+        pdfs += sorted(p for p in settings.pdf_dir.glob("*.PDF") if p not in pdfs)
     if name_filters:
         pdfs = [p for p in pdfs if any(k in p.name for k in name_filters)]
 
     summary: list[dict[str, Any]] = []
     if not pdfs:
-        print("No PDFs found", flush=True)
+        print(f"No PDFs found in {settings.pdf_dir}", flush=True)
         return summary
 
     for pdf in pdfs:

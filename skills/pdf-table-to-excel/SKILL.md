@@ -4,6 +4,7 @@ description: >
   Convert PDF tables to multi-sheet Excel packages with MinerU: original table
   screenshots, figures, QC notes, no fabricated data. Use in this repo for any
   PDF→Excel / batch table extraction / visual table QC task.
+  REQUIRES multimodal/vision model for QC (must open 原始表格/*.jpg images).
   Triggers: 转表格, 转excel, 转Excel, PDF表格, pdf转excel, mineru, 原始表格,
   批量转换, 继续转, 再转一批, 表格转excel, /pdf-table-to-excel
 ---
@@ -11,6 +12,22 @@ description: >
 # PDF tables → Excel (MinerU packaging pipeline)
 
 **Read root `AGENTS.md` first** for hard rules. This skill is the executable checklist.
+
+## Model requirement (critical)
+
+| Stage | Needs vision? | Why |
+|-------|---------------|-----|
+| Run `python -m pdf_excel` | No | CLI + MinerU text/HTML path |
+| **QC / fix sheets** | **Yes — multimodal required** | Must **open and read** `原始表格/*.jpg` (or PDF page renders) and compare cells to Excel |
+
+If the current model **cannot see images** (text-only):
+
+1. Still run the automatic pipeline and package notes.
+2. **Do not claim** “已严格质检 / 已对照原表”.
+3. Tell the user QC needs a **vision-capable** model (or human review).
+4. Prefer stopping after packaging rather than inventing fixes from HTML alone.
+
+OpenCode / free text models: good for orchestration; switch to multimodal for step 5.
 
 ## Environment (portable)
 
@@ -80,22 +97,22 @@ python -m pdf_excel 关键词
 - xlsx + `原始表格/` + `图片/` + notes
 - Rotate unreadable table crops before QC when needed
 
-### 5. Forced QC (never skip)
+### 5. Forced QC (never skip) — vision step
 
-For each sheet:
+For each sheet (**multimodal**):
 
-1. Open matching `原始表格/` image (agent `read_file` on image) or PDF page
-2. Check headers, dims, IDs, numbers
-3. Fix xlsx immediately when wrong
+1. **Open image**: matching `原始表格/表N_*.jpg` via vision / image read — not HTML alone
+2. Check headers, dims, IDs, numbers against the screenshot
+3. Fix xlsx immediately when wrong (openpyxl or rewrite sheet)
 4. Print conflicts → keep print + note
-5. Landscape disasters → rotate + OCR + manual rebuild
+5. Landscape disasters → rotate crop + OCR + manual rebuild
 
 Checklist:
 
 - [ ] Sheet count / titles
 - [ ] Headers & dimensions
 - [ ] Symbols / subscripts
-- [ ] Values
+- [ ] Values (spot-check full rows on the **image**)
 - [ ] Assets complete
 - [ ] Notes file present
 

@@ -18,12 +18,9 @@ OCR_REPLACEMENTS: list[tuple[str, str]] = [
     ("SiO₂", "SiO2"),
     ("SiO{2", "SiO2"),
     ("TiO₂", "TiO2"),
-    ("CaO", "CaO"),  # no-op anchor for doc
     ("K₂O", "K2O"),
     ("Na₂O", "Na2O"),
-    ("MgO", "MgO"),
     ("P₂O₅", "P2O5"),
-    ("MnO", "MnO"),
     ("SO₃", "SO3"),
     # weight percent labels
     ("w1%", "w/%"),
