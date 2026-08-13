@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.2.3 — 2026-08-01
+
+### Docs
+
+- **Chinese default landing page**: root `README.md` is 简体中文 (view on GitHub homepage, no download)
+- English full text: `README.en.md` with language switcher links
+- `README.zh-CN.md` kept only as a short pointer for old bookmarks
+
 ## 0.2.2 — 2026-08-01
 
 ### Docs
