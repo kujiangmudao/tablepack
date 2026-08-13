@@ -7,7 +7,7 @@ Thanks for helping improve **pdf-excel**.
 1. **Do not commit copyrighted PDFs**, personal research corpora, or full `output/` / `work/` trees.
 2. Prefer synthetic HTML fixtures in `tests/` for regressions.
 3. Keep the **no fabricated data** policy when changing empty-table behavior.
-4. Document user-facing changes in `README.md` / `CHANGELOG.md`.
+4. Document user-facing changes in `README.md` (中文首页) / `README.en.md` (English) / `CHANGELOG.md`.
 
 ## Dev setup
 
