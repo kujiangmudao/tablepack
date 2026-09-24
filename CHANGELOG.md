@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.2.4 — 2026-09-24
+
+### Docs
+
+- **English is the default landing page**: root `README.md` is now the English full text; Chinese moved to `README.zh-CN.md` (language switcher in both)
+- READMEs revamped: hero layout, workflow diagram (EN / zh-CN), CLI table, project layout
+- Fixed stale references: repo homepage link, `CONTRIBUTING.md` (`pdf-excel` → `tablepack`, wrong clone path), `docs/INSTALL.md` language links
+
 ## 0.2.3 — 2026-08-01
 
 ### Docs

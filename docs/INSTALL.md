@@ -2,7 +2,7 @@
 
 **Product & repo: [TablePack](https://github.com/kujiangmudao/tablepack)** · CLI: `python -m pdf_excel`  
 
-**语言:** [中文首页 README](../README.md) · [English README](../README.en.md)
+**语言:** [English README](../README.md) · [中文说明](../README.zh-CN.md)
 
 ## Promise: no MinerU tutorial required
 
