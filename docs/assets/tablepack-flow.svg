@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 240" role="img" aria-label="TablePack workflow: PDF tables to a review-ready Excel package in one command">
+  <style>
+    .card { fill: #f6f8fa; stroke: #d0d7de; stroke-width: 1; }
+    .accent { fill: #f6f8fa; stroke: #0969da; stroke-width: 2; }
+    .txt { fill: #1f2328; font-family: -apple-system, 'Segoe UI', 'Microsoft YaHei', 'PingFang SC', sans-serif; }
+    .sub { fill: #57606a; font-family: -apple-system, 'Segoe UI', 'Microsoft YaHei', 'PingFang SC', sans-serif; }
+    .mono { fill: #1f2328; font-family: ui-monospace, 'Cascadia Code', Consolas, 'Courier New', monospace; }
+    .arrow { stroke: #8b949e; stroke-width: 2; fill: none; }
+    .arrowhead { fill: #8b949e; }
+    .line { stroke: #d0d7de; stroke-width: 1; }
+    @media (prefers-color-scheme: dark) {
+      .card { fill: #161b22; stroke: #30363d; }
+      .accent { fill: #161b22; stroke: #4493f8; }
+      .txt { fill: #e6edf3; }
+      .sub { fill: #8b949e; }
+      .mono { fill: #e6edf3; }
+      .arrow { stroke: #6e7681; }
+      .arrowhead { fill: #6e7681; }
+      .line { stroke: #30363d; }
+    }
+  </style>
+
+  <rect x="44" y="62" width="164" height="116" rx="10" class="card"/>
+  <rect x="108" y="82" width="36" height="28" rx="3" fill="none" stroke="#8b949e" stroke-width="2"/>
+  <line x1="108" y1="92" x2="144" y2="92" class="line"/>
+  <line x1="108" y1="101" x2="144" y2="101" class="line"/>
+  <line x1="126" y1="82" x2="126" y2="110" class="line"/>
+  <text x="126" y="134" text-anchor="middle" font-size="10" letter-spacing="1.5" class="sub">INPUT</text>
+  <text x="126" y="160" text-anchor="middle" font-size="20" font-weight="700" class="txt">PDF tables</text>
+
+  <line x1="212" y1="120" x2="254" y2="120" class="arrow"/>
+  <polygon points="266,120 252,113 252,127" class="arrowhead"/>
+
+  <rect x="272" y="44" width="288" height="152" rx="14" class="accent"/>
+  <text x="416" y="108" text-anchor="middle" font-size="26" font-weight="700" class="txt">TablePack</text>
+  <line x1="332" y1="126" x2="500" y2="126" class="line"/>
+  <text x="416" y="148" text-anchor="middle" font-size="13" class="sub">one command, review-ready output</text>
+  <text x="416" y="172" text-anchor="middle" font-size="13" class="mono">$ python -m pdf_excel</text>
+
+  <line x1="564" y1="120" x2="606" y2="120" class="arrow"/>
+  <polygon points="618,120 604,113 604,127" class="arrowhead"/>
+
+  <rect x="624" y="62" width="292" height="116" rx="10" class="card"/>
+  <text x="644" y="90" font-size="13" class="mono sub">output/&lt;name&gt;/</text>
+  <text x="644" y="115" font-size="13" class="mono">├── report.xlsx</text>
+  <text x="644" y="137" font-size="13" class="mono">├── 原始表格/</text>
+  <text x="644" y="159" font-size="13" class="mono">└── 转换说明.md</text>
+
+  <text x="480" y="222" text-anchor="middle" font-size="12" class="sub">No MinerU CLI · no JSON wrangling · no tutorials</text>
+</svg>
