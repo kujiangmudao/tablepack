@@ -39,3 +39,27 @@ def test_write_excel_simple(tmp_path: Path):
     # data starts at row 4 when no footnote
     assert ws.cell(4, 1).value == "A"
     assert ws.cell(5, 2).value == "2"
+
+
+def test_write_excel_english_labels(tmp_path: Path):
+    tables = [
+        TableItem(
+            index=1,
+            page_idx=0,
+            caption="Demo table",
+            caption_raw=["Demo table"],
+            footnote=[],
+            html_body="<table><tr><th>A</th></tr><tr><td>1</td></tr></table>",
+            img_path=None,
+            bbox=None,
+        )
+    ]
+    xlsx = tmp_path / "demo_en.xlsx"
+    issues = write_excel(tables, xlsx, language="en")
+    assert xlsx.is_file()
+    assert issues == []
+    wb = load_workbook(xlsx)
+    assert wb.sheetnames[0].startswith("Table1_")
+    ws = wb.active
+    assert ws["A1"].value == "Caption: Demo table"
+    assert ws["A2"].value == "Page: 1"

@@ -17,7 +17,7 @@ def build_parser() -> argparse.ArgumentParser:
     p = argparse.ArgumentParser(
         prog="pdf-excel",
         description="MinerU-based PDF table → multi-sheet Excel packaging pipeline "
-        "with 原始表格 screenshots and QC notes.",
+        "with table-crop screenshots and QC notes.",
     )
     p.add_argument("-V", "--version", action="version", version=f"pdf-excel {__version__}")
     p.add_argument(

@@ -47,6 +47,7 @@ Prefer `config.yaml` / env / CLI — do **not** hardcode another machine’s pat
 | Output | `output/` |
 | MinerU cache | `work/mineru_raw/` |
 | MinerU | `config.yaml` / `MINERU_BIN` / PATH / `.venv-mineru` |
+| Output names | `output_language` in config: `zh` (default) → `原始表格/`, `图片/`, `转换说明.md`; `en` → `table_crops/`, `images/`, `conversion_notes.md` |
 
 Recommended MinerU flags (also set in config):
 
@@ -65,6 +66,8 @@ output/<PDF_STEM>/
   ├── 图片/
   └── 转换说明.md | 问题说明.md
 ```
+
+> Names above follow `output_language: zh` (default). With `output_language: en`, use `table_crops/`, `images/`, `conversion_notes.md` / `issues.md` instead.
 
 ## Business rules
 

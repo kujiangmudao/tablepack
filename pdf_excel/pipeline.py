@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""End-to-end package: MinerU → Excel → 原始表格/图片 → notes."""
+"""End-to-end package: MinerU → Excel → table crops/figures → notes."""
 
 from __future__ import annotations
 
@@ -14,6 +14,7 @@ from .clean import safe_filename
 from .config import Settings
 from .excel_writer import write_excel
 from .models import TableItem
+from .names import get_texts
 from .parse_mineru import find_content_list, parse_content_list, reindex_tables
 
 
@@ -91,63 +92,62 @@ def write_notes(
     image_count: int,
     issues: list[str],
     dropped_empty: int = 0,
+    language: str = "zh",
 ) -> Path:
+    texts = get_texts(language)
+    tables_dir = texts["tables_dir"]
     md_lines = [
-        f"# {stem} — 转换说明",
+        texts["notes_title"].format(stem=stem),
         "",
-        f"- 源 PDF: `{pdf_name}`",
-        f"- 写入 Excel 的表格数: **{len(tables)}**",
-        f"- 丢弃空表节点: **{dropped_empty}**" if dropped_empty else None,
-        f"- 识别图片/图件数: **{image_count}**",
-        f"- Excel: `{stem}.xlsx`",
-        f"- 原始表格图片目录: `原始表格/`",
-        f"- 文中图片目录: `图片/`",
+        texts["notes_source_pdf"].format(v=pdf_name),
+        texts["notes_tables_count"].format(v=len(tables)),
+        texts["notes_dropped_count"].format(v=dropped_empty) if dropped_empty else None,
+        texts["notes_images_count"].format(v=image_count),
+        texts["notes_xlsx"].format(v=f"{stem}.xlsx"),
+        texts["notes_tables_dir"].format(v=tables_dir),
+        texts["notes_images_dir"].format(v=texts["images_dir"]),
         "",
-        "## 表格清单",
+        texts["notes_table_list_header"],
         "",
     ]
     md_lines = [x for x in md_lines if x is not None]
 
     if tables:
         for t in tables:
-            md_lines.append(f"### 表{t.index}: {t.caption or '(无标题)'}")
-            md_lines.append(f"- 页码: {t.page_idx + 1}")
-            md_lines.append(f"- 原始图: `{t.img_path or '无'}`")
+            md_lines.append(
+                texts["notes_table_h3"].format(index=t.index, caption=t.caption or texts["no_caption"])
+            )
+            md_lines.append(texts["notes_page_line"].format(v=t.page_idx + 1))
+            md_lines.append(texts["notes_source_img"].format(v=t.img_path or texts["none"]))
             if t.issues:
-                md_lines.append(f"- 问题: {'; '.join(t.issues)}")
+                md_lines.append(texts["notes_issues_line"].format(v="; ".join(t.issues)))
             else:
-                md_lines.append("- 状态: 已写入 Excel")
+                md_lines.append(texts["notes_ok_line"])
             md_lines.append("")
     else:
-        md_lines.append("未识别到可写入的表格。")
+        md_lines.append(texts["notes_no_tables"])
         md_lines.append("")
 
-    md_lines.append("## 质检提醒")
+    md_lines.append(texts["notes_qc_header"])
     md_lines.append("")
-    md_lines.append(
-        "自动转换**不等于**交付完成。请对照 `原始表格/` 检查表头、行列、合并单元格与数值；"
-        "无法修复的问题写在下方，**不要伪造数据**。"
-    )
+    md_lines.append(texts["notes_qc_body"].format(tables_dir=tables_dir))
     md_lines.append("")
 
     if issues or not tables:
-        md_lines.append("## 问题与限制")
+        md_lines.append(texts["notes_limits_header"])
         md_lines.append("")
         for iss in issues:
             md_lines.append(f"- {iss}")
         if not issues and not tables:
-            md_lines.append("- MinerU 未识别到 table 类型对象，或全部为空表。")
+            md_lines.append(texts["notes_mineru_empty"])
         md_lines.append("")
-        md_lines.append(
-            "> 表格由 MinerU 识别并结构还原。若单元格错位、合并表头不准或数值可疑，"
-            "请对照 `原始表格/` 截图人工核对并修改 xlsx。"
-        )
-        path = out_dir / "问题说明.md"
+        md_lines.append(texts["notes_limits_body"].format(tables_dir=tables_dir))
+        path = out_dir / texts["issues_file"]
     else:
-        md_lines.append("## 问题与限制")
+        md_lines.append(texts["notes_limits_header"])
         md_lines.append("")
-        md_lines.append("本次自动转换未发现结构性失败。请仍对照 `原始表格/` 做最终核验。")
-        path = out_dir / "转换说明.md"
+        md_lines.append(texts["notes_all_ok"].format(tables_dir=tables_dir))
+        path = out_dir / texts["notes_file"]
 
     path.write_text("\n".join(md_lines), encoding="utf-8")
     return path
@@ -156,6 +156,7 @@ def write_notes(
 def package_output(settings: Settings, pdf_path: Path, force_mineru: bool = False) -> dict[str, Any]:
     pdf_path = Path(pdf_path)
     stem = pdf_path.stem
+    texts = get_texts(settings.output_language)
     result: dict[str, Any] = {
         "pdf": pdf_path.name,
         "stem": stem,
@@ -167,7 +168,7 @@ def package_output(settings: Settings, pdf_path: Path, force_mineru: bool = Fals
     }
 
     if not pdf_path.is_file():
-        result["issues"].append(f"PDF 文件不存在: {pdf_path}")
+        result["issues"].append(texts["issue_pdf_missing"].format(v=pdf_path))
         return result
 
     out_dir = settings.output_dir / stem
@@ -186,29 +187,29 @@ def package_output(settings: Settings, pdf_path: Path, force_mineru: bool = Fals
         except FileNotFoundError as e:
             result["issues"].append(str(e))
             out_dir.mkdir(parents=True, exist_ok=True)
-            (out_dir / "问题说明.md").write_text(
-                f"# {stem}\n\n## 失败原因\n\n{e}\n",
+            (out_dir / texts["issues_file"]).write_text(
+                f"# {stem}\n\n{texts['fail_header']}\n\n{e}\n",
                 encoding="utf-8",
             )
             return result
         auto_dir = find_auto_dir(settings, stem)
         if auto_dir is None:
-            result["issues"].append(f"MinerU 未生成输出目录 (exit={code})")
+            result["issues"].append(texts["issue_no_auto_dir"].format(v=code))
             out_dir.mkdir(parents=True, exist_ok=True)
-            (out_dir / "问题说明.md").write_text(
-                f"# {stem}\n\n## 失败原因\n\nMinerU 未能解析该 PDF，未生成 auto 输出目录。\n\n"
-                f"- 源文件: `{pdf_path}`\n"
-                f"- mineru exit code: {code}\n",
+            (out_dir / texts["issues_file"]).write_text(
+                f"# {stem}\n\n{texts['fail_header']}\n\n{texts['fail_no_auto']}\n\n"
+                f"{texts['fail_source_file'].format(v=pdf_path)}\n"
+                f"{texts['fail_exit_code'].format(v=code)}\n",
                 encoding="utf-8",
             )
             return result
 
     cl_path = find_content_list(auto_dir)
     if cl_path is None:
-        result["issues"].append("找不到 content_list.json")
+        result["issues"].append(texts["issue_no_content_list"])
         out_dir.mkdir(parents=True, exist_ok=True)
-        (out_dir / "问题说明.md").write_text(
-            f"# {stem}\n\n## 失败原因\n\nMinerU 输出中缺少 `*_content_list.json`，无法提取表格。\n",
+        (out_dir / texts["issues_file"]).write_text(
+            f"# {stem}\n\n{texts['fail_header']}\n\n{texts['fail_no_content_list']}\n",
             encoding="utf-8",
         )
         return result
@@ -221,8 +222,11 @@ def package_output(settings: Settings, pdf_path: Path, force_mineru: bool = Fals
             if t.is_empty:
                 dropped += 1
                 result["issues"].append(
-                    f"表{t.index} ({t.caption or '无标题'}, p{t.page_idx + 1}): "
-                    "table_body 为空，已丢弃（不写入假数据）"
+                    texts["issue_empty_dropped"].format(
+                        i=t.index,
+                        caption=t.caption or texts["no_caption"],
+                        page=t.page_idx + 1,
+                    )
                 )
             else:
                 kept.append(t)
@@ -235,29 +239,35 @@ def package_output(settings: Settings, pdf_path: Path, force_mineru: bool = Fals
     if out_dir.exists() and settings.wipe_output_package:
         shutil.rmtree(out_dir)
     out_dir.mkdir(parents=True, exist_ok=True)
-    raw_table_dir = out_dir / "原始表格"
+    raw_table_dir = out_dir / texts["tables_dir"]
     raw_table_dir.mkdir(parents=True, exist_ok=True)
-    fig_dir = out_dir / "图片"
+    fig_dir = out_dir / texts["images_dir"]
     fig_dir.mkdir(parents=True, exist_ok=True)
 
     for t in tables:
         if not t.img_path:
-            t.issues.append("缺少原始表格图片路径")
-            result["issues"].append(f"表{t.index}: 缺少 img_path")
+            t.issues.append(texts["issue_missing_img_path"])
+            result["issues"].append(
+                texts["issue_table_tag"].format(i=t.index, msg=texts["issue_missing_img_path"])
+            )
             continue
         src = _resolve_img(auto_dir, t.img_path)
         if src is None:
-            t.issues.append(f"原始表格图片不存在: {t.img_path}")
-            result["issues"].append(f"表{t.index}: 图片缺失 {t.img_path}")
+            t.issues.append(texts["issue_table_img_missing"].format(v=t.img_path))
+            result["issues"].append(
+                texts["issue_table_tag"].format(
+                    i=t.index, msg=texts["issue_table_img_missing"].format(v=t.img_path)
+                )
+            )
             continue
-        cap_safe = safe_filename(t.caption or f"第{t.page_idx + 1}页")
-        dest_name = f"表{t.index}_{cap_safe}{src.suffix}"
+        cap_safe = safe_filename(t.caption or texts["page_label"].format(p=t.page_idx + 1))
+        dest_name = f"{texts['table_word']}{t.index}_{cap_safe}{src.suffix}"
         shutil.copy2(src, raw_table_dir / dest_name)
 
     for i, im in enumerate(images, 1):
         src = _resolve_img(auto_dir, im.img_path)
         if src is None:
-            result["issues"].append(f"{im.type} 图片缺失: {im.img_path}")
+            result["issues"].append(texts["issue_figure_missing"].format(type=im.type, v=im.img_path))
             continue
         cap_safe = safe_filename(im.caption or f"p{im.page_idx + 1}", 50)
         dest_name = f"{im.type}_{i:02d}_p{im.page_idx + 1}_{cap_safe}{src.suffix}"
@@ -275,13 +285,13 @@ def package_output(settings: Settings, pdf_path: Path, force_mineru: bool = Fals
             if imgf.is_file() and imgf.name not in used_srcs:
                 shutil.copy2(imgf, fig_dir / f"other_{imgf.name}")
 
-    excel_issues = write_excel(tables, xlsx_path)
+    excel_issues = write_excel(tables, xlsx_path, language=settings.output_language)
     result["issues"].extend(excel_issues)
 
     for t in tables:
         if t.issues:
             for iss in t.issues:
-                tag = f"表{t.index}: {iss}"
+                tag = texts["issue_table_tag"].format(i=t.index, msg=iss)
                 if tag not in result["issues"]:
                     result["issues"].append(tag)
 
@@ -293,6 +303,7 @@ def package_output(settings: Settings, pdf_path: Path, force_mineru: bool = Fals
         len(images),
         result["issues"],
         dropped_empty=dropped,
+        language=settings.output_language,
     )
 
     result["ok"] = True

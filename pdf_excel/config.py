@@ -9,6 +9,8 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
 
+from .names import normalize_language
+
 try:
     import yaml  # type: ignore
 except ImportError:  # optional dependency
@@ -108,6 +110,9 @@ class Settings:
     skip_existing_excel: bool = False
     wipe_output_package: bool = True
 
+    # Output naming / notes language: "zh" (default) | "en"
+    output_language: str = "zh"
+
     def resolve(self) -> "Settings":
         root = Path(self.root).expanduser()
         if not root.is_absolute():
@@ -140,6 +145,7 @@ class Settings:
         self.drop_empty_tables = _coerce_bool(self.drop_empty_tables, True)
         self.skip_existing_excel = _coerce_bool(self.skip_existing_excel, False)
         self.wipe_output_package = _coerce_bool(self.wipe_output_package, True)
+        self.output_language = normalize_language(self.output_language)
         return self
 
     def as_dict(self) -> dict[str, Any]:
@@ -158,6 +164,7 @@ class Settings:
             "drop_empty_tables": self.drop_empty_tables,
             "skip_existing_excel": self.skip_existing_excel,
             "wipe_output_package": self.wipe_output_package,
+            "output_language": self.output_language,
         }
 
 
@@ -213,6 +220,8 @@ def load_settings(
     for key in ("backend", "method", "language"):
         if key in raw and raw[key] is not None:
             setattr(s, key, raw[key])
+    if raw.get("output_language"):
+        s.output_language = str(raw["output_language"])
     for key in (
         "enable_table",
         "enable_formula",
@@ -240,6 +249,8 @@ def load_settings(
         s.backend = os.environ["PDF_EXCEL_BACKEND"]
     if os.environ.get("PDF_EXCEL_LANG"):
         s.language = os.environ["PDF_EXCEL_LANG"]
+    if os.environ.get("PDF_EXCEL_OUTPUT_LANGUAGE"):
+        s.output_language = os.environ["PDF_EXCEL_OUTPUT_LANGUAGE"]
 
     # explicit overrides (CLI)
     if overrides:

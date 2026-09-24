@@ -106,6 +106,8 @@ python -m pdf_excel --dry-config   # 检查环境与配置
 
 每个交付包包含：**Excel 工作簿**（一表一 sheet）、**`原始表格/` 质检截图**、**提取的图片**、**说明文件**（转换说明，或表格失败时的问题说明）。
 
+输出目录 / 文件名默认中文；需要英文命名（`table_crops/`、`conversion_notes.md`、`issues.md`）时，在 `config.yaml` 里设置 `output_language: en`。
+
 不想跑解析、先看交付物长相：[`examples/demo_output/demo_sample/`](examples/demo_output/demo_sample/)
 
 ## Agent 用法

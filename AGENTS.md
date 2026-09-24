@@ -47,6 +47,8 @@ output/<PDF_STEM>/
       or 问题说明.md     # fail / partial fail
 ```
 
+> Output names follow `output_language` in `config.yaml`: `zh` (default) as above, or `en` → `table_crops/`, `images/`, `conversion_notes.md` / `issues.md`.
+
 5. **Strict visual QC** after auto convert: compare each sheet vs `原始表格/` (or PDF). Fix misaligned columns, bad headers, merges, suspicious numbers **immediately**.
 6. **Unrecoverable tables**: write markdown explaining why — **never fabricate data**.
 7. PDFs with no tables: still emit folder + placeholder xlsx + `问题说明.md` + keep figures when possible.

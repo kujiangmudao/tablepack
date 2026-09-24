@@ -13,6 +13,7 @@ from openpyxl.utils import get_column_letter
 from .clean import clean_cell_text
 from .html_table import html_table_to_grid
 from .models import TableItem
+from .names import get_texts
 
 
 def sanitize_sheet_name(name: str, used: set[str]) -> str:
@@ -37,10 +38,11 @@ def sanitize_sheet_name(name: str, used: set[str]) -> str:
     return name
 
 
-def write_excel(tables: list[TableItem], xlsx_path) -> list[str]:
+def write_excel(tables: list[TableItem], xlsx_path, language: str = "zh") -> list[str]:
     """Write all tables into one workbook (one sheet per table)."""
     from pathlib import Path
 
+    texts = get_texts(language)
     xlsx_path = Path(xlsx_path)
     issues: list[str] = []
     wb = Workbook()
@@ -56,8 +58,8 @@ def write_excel(tables: list[TableItem], xlsx_path) -> list[str]:
     wrap = Alignment(wrap_text=True, vertical="center", horizontal="center")
 
     if not tables:
-        default.title = "无表格"
-        default["A1"] = "未从该 PDF 中识别到可转换的表格"
+        default.title = texts["xlsx_no_tables_sheet"]
+        default["A1"] = texts["xlsx_no_tables_msg"]
         issues.append("no tables found")
         xlsx_path.parent.mkdir(parents=True, exist_ok=True)
         wb.save(xlsx_path)
@@ -68,13 +70,21 @@ def write_excel(tables: list[TableItem], xlsx_path) -> list[str]:
         grid, g_issues = html_table_to_grid(t.html_body)
         t.issues.extend(g_issues)
         if g_issues:
-            issues.append(f"表{t.index} ({t.caption or '无标题'}): {'; '.join(g_issues)}")
+            issues.append(
+                texts["xlsx_table_issue"].format(
+                    i=t.index,
+                    caption=t.caption or texts["no_caption"],
+                    msg="; ".join(g_issues),
+                )
+            )
 
-        cap = t.caption or f"第{t.page_idx + 1}页表格"
+        cap = t.caption or texts["xlsx_page_table"].format(page=t.page_idx + 1)
         cap_short = re.split(r"\s*Table\s+\d+", cap, maxsplit=1, flags=re.I)[0].strip()
         if not cap_short:
             cap_short = cap
-        sheet_name = sanitize_sheet_name(f"表{t.index}_{cap_short}", used_names)
+        sheet_name = sanitize_sheet_name(
+            texts["xlsx_sheet_name"].format(index=t.index, caption=cap_short), used_names
+        )
 
         if first:
             ws = default
@@ -83,16 +93,16 @@ def write_excel(tables: list[TableItem], xlsx_path) -> list[str]:
         else:
             ws = wb.create_sheet(title=sheet_name)
 
-        ws["A1"] = f"标题: {t.caption or '(无)'}"
-        ws["A2"] = f"页码: {t.page_idx + 1}"
+        ws["A1"] = texts["xlsx_title_line"].format(v=t.caption or texts["xlsx_none"])
+        ws["A2"] = texts["xlsx_page_line"].format(v=t.page_idx + 1)
         if t.footnote:
-            ws["A3"] = "注释: " + " | ".join(
+            ws["A3"] = texts["xlsx_footnote_prefix"] + " | ".join(
                 clean_cell_text(BeautifulSoup(str(f), "lxml").get_text(" ", strip=True)) for f in t.footnote
             )
         start_row = 5 if t.footnote else 4
 
         if not grid:
-            ws.cell(row=start_row, column=1, value="(表格 HTML 解析失败，请查看原始表格图片与问题说明)")
+            ws.cell(row=start_row, column=1, value=texts["xlsx_html_fail"])
             continue
 
         for r_i, row in enumerate(grid):

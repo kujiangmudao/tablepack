@@ -4,6 +4,8 @@
 
 **语言:** [English README](../README.md) · [中文说明](../README.zh-CN.md)
 
+> **Output naming:** folder/file names follow `output_language` in `config.yaml` — `zh` (default): `原始表格/`, `转换说明.md`; `en`: `table_crops/`, `conversion_notes.md`, `issues.md`.
+
 ## Promise: no MinerU tutorial required
 
 TablePack **wraps MinerU**. After MinerU is present on the machine:

@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.3.0 — 2026-09-24
+
+### Added
+
+- `output_language: zh | en` config option (env: `PDF_EXCEL_OUTPUT_LANGUAGE`) — localizes the whole delivery surface; default `zh` keeps existing output unchanged:
+  - Names: `原始表格/`, `图片/`, `转换说明.md`, `问题说明.md` → `table_crops/`, `images/`, `conversion_notes.md`, `issues.md`
+  - Note contents, Excel sheet names/row labels, failure notes and batch result messages
+  - Crop file names: `表N_*` → `TableN_*`
+- English mode verified end-to-end on a real cached batch
+
 ## 0.2.4 — 2026-09-24
 
 ### Docs

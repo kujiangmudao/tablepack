@@ -106,6 +106,8 @@ Then follow [Quick start](#quick-start) to run the demo. Full detail: [docs/INST
 
 Each package folder contains **the workbook** (one sheet per table), **table-crop screenshots** for QC, **extracted images**, and **notes** (conversion notes, or an issues file when a table fails).
 
+Folder/file names default to Chinese — set `output_language: en` in `config.yaml` to get English names (`table_crops/`, `images/`, `conversion_notes.md`, `issues.md`).
+
 Inspect a sample package without running anything: [`examples/demo_output/demo_sample/`](examples/demo_output/demo_sample/)
 
 ## Agent skill

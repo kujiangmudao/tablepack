@@ -33,3 +33,8 @@ enable_formula: false
 drop_empty_tables: true   # drop empty table_body (do not invent rows)
 skip_existing_excel: false
 wipe_output_package: true # rebuild output/<stem>/ each run
+
+# Output naming & notes language: zh (default) | en
+# zh → 原始表格/, 图片/, 转换说明.md, 问题说明.md
+# en → table_crops/, images/, conversion_notes.md, issues.md
+output_language: zh
