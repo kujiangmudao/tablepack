@@ -108,7 +108,7 @@ Each package folder contains **the workbook** (one sheet per table), **table-cro
 
 Folder/file names default to Chinese — set `output_language: en` in `config.yaml` to get English names (`table_crops/`, `images/`, `conversion_notes.md`, `issues.md`).
 
-Inspect a sample package without running anything: [`examples/demo_output/demo_sample/`](examples/demo_output/demo_sample/)
+Inspect a sample package without running anything: [`examples/demo_output/demo_sample_en/`](examples/demo_output/demo_sample_en/)
 
 ## Agent skill
 

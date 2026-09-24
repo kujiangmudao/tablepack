@@ -5,8 +5,9 @@
 | Path | What it is |
 |------|------------|
 | [`demo/demo_sample.pdf`](demo/demo_sample.pdf) | Tiny synthetic PDF with one oxide table (fictional numbers) |
-| [`demo_output/demo_sample/`](demo_output/demo_sample/) | Example deliverable package: xlsx + `原始表格/` + `转换说明.md` |
-| [`build_demo.py`](build_demo.py) | Regenerates the PDF and sample package |
+| [`demo_output/demo_sample/`](demo_output/demo_sample/) | Example package, `output_language: zh`: xlsx + `原始表格/` + `转换说明.md` |
+| [`demo_output/demo_sample_en/`](demo_output/demo_sample_en/) | Example package, `output_language: en`: xlsx + `table_crops/` + `conversion_notes.md` |
+| [`build_demo.py`](build_demo.py) | Regenerates the PDF and both sample packages (via the real packaging modules) |
 
 ```bash
 # inspect package layout without MinerU

@@ -9,6 +9,7 @@
   - Note contents, Excel sheet names/row labels, failure notes and batch result messages
   - Crop file names: `表N_*` → `TableN_*`
 - English mode verified end-to-end on a real cached batch
+- Sample packages regenerated in both languages: `examples/demo_output/demo_sample/` (zh) and `demo_sample_en/` (en), built through the real packaging modules so they always match actual output
 
 ## 0.2.4 — 2026-09-24
 
