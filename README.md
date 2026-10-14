@@ -29,7 +29,7 @@ One command: drop in PDFs, get a review-ready Excel package · table-crop screen
 - **Table-crop screenshots** saved next to every package — QC without extra tooling
 - Empty / broken tables → **written into notes, never invented data**
 - **Optional SQLite step** (`--import-db`): every package also becomes a typed, deduplicated `<stem>.db` data asset with row-level provenance
-- **Optional AI header cleanup** (`--smart`): merged / multi-level headers are flattened into one clear header row by any OpenAI-compatible model, with suspicious values reported in the notes — see [measured results & cost](docs/smart-model-notes.md)
+- **Optional AI header cleanup** (`--smart`): merged / multi-level headers are flattened into one clear header row by any OpenAI-compatible model, with suspicious values reported in the notes — free models (via the opencode CLI gateway) measure at paid-model quality; see [measured results & cost](docs/smart-model-notes.md)
 - Ships with an [agent skill](skills/pdf-table-to-excel/SKILL.md): the same SOP for humans and agents
 
 ## Quick start
@@ -117,7 +117,7 @@ With `--import-db` (or `import_db: true`), each package additionally contains `<
 
 Folder/file names default to Chinese — set `output_language: en` in `config.yaml` to get English names (`table_crops/`, `images/`, `conversion_notes.md`, `issues.md`).
 
-With `--smart`, an OpenAI-compatible LLM flattens merged / multi-level headers into one clear row (e.g. `工业分析` + `Mad` → `工业分析_Mad`) and reports suspicious cells (OCR slips, inconsistent values) in the notes. Clean tables cost **zero** API calls. Setup: `llm_base_url` + `llm_model` in `config.yaml` (or env `PDF_EXCEL_LLM_BASE_URL` / `PDF_EXCEL_LLM_MODEL`), key in env `PDF_EXCEL_LLM_API_KEY`. Measured models & cost: [docs/smart-model-notes.md](docs/smart-model-notes.md).
+With `--smart`, an OpenAI-compatible LLM flattens merged / multi-level headers into one clear row (e.g. `工业分析` + `Mad` → `工业分析_Mad`) and reports suspicious cells (OCR slips, inconsistent values) in the notes. Clean tables cost **zero** API calls. Setup: `llm_base_url` + `llm_model` in `config.yaml` (or env `PDF_EXCEL_LLM_BASE_URL` / `PDF_EXCEL_LLM_MODEL`), key in env `PDF_EXCEL_LLM_API_KEY`. No paid API? Free models (mimo-v2.6-flash-free, longcat, step-5, …) match DeepSeek's quality when routed through the local opencode CLI gateway. Measured models & cost: [docs/smart-model-notes.md](docs/smart-model-notes.md).
 
 Inspect a sample package without running anything: [`examples/demo_output/demo_sample_en/`](examples/demo_output/demo_sample_en/)
 

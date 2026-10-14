@@ -1,5 +1,11 @@
 # Changelog
 
+## Unreleased
+
+### Changed
+
+- `docs/smart-model-notes.md`: free-tier models (routed via the local opencode CLI gateway) measured on two hard-case tables — 8/8 pass each, matching `deepseek-chat` quality; the smart layer no longer implies a paid API is required (READMEs updated accordingly)
+
 ## 0.5.0 — 2026-10-14
 
 ### Added

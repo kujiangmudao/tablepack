@@ -29,7 +29,7 @@
 - 同目录 **`原始表格/` 截图**，逐表核对不依赖任何工具
 - 空表 / 坏表**写进说明文件，绝不编造数据**
 - **可选 SQLite 步骤**（`--import-db`）：交付包同时生成带类型推断、去重计数、行级溯源的 `<stem>.db` 数据资产
-- **可选 AI 表头清洗**（`--smart`）：多级 / 合并表头由任意 OpenAI 兼容模型拉平成一行清晰表头，可疑数值写进备注——见[实测结果与花费](docs/smart-model-notes.md)
+- **可选 AI 表头清洗**（`--smart`）：多级 / 合并表头由任意 OpenAI 兼容模型拉平成一行清晰表头，可疑数值写进备注——免费模型（经 opencode CLI 网关）实测达到付费模型效果，见[实测结果与花费](docs/smart-model-notes.md)
 - 自带 [Agent Skill](skills/pdf-table-to-excel/SKILL.md)：人用、AI 用，同一套 SOP
 
 ## 快速开始
@@ -117,7 +117,7 @@ python -m pdf_excel --dry-config   # 检查环境与配置
 
 输出目录 / 文件名默认中文；需要英文命名（`table_crops/`、`conversion_notes.md`、`issues.md`）时，在 `config.yaml` 里设置 `output_language: en`。
 
-加上 `--smart`，OpenAI 兼容模型会把多级 / 合并表头拉平成一行清晰表头（如 `工业分析` + `Mad` → `工业分析_Mad`），并把可疑单元格（OCR 笔误、数值矛盾）写进备注；**干净表头零 API 调用**。配置：`config.yaml` 里的 `llm_base_url` + `llm_model`（或环境变量 `PDF_EXCEL_LLM_BASE_URL` / `PDF_EXCEL_LLM_MODEL`），密钥放环境变量 `PDF_EXCEL_LLM_API_KEY`。实测模型与花费见 [docs/smart-model-notes.md](docs/smart-model-notes.md)。
+加上 `--smart`，OpenAI 兼容模型会把多级 / 合并表头拉平成一行清晰表头（如 `工业分析` + `Mad` → `工业分析_Mad`），并把可疑单元格（OCR 笔误、数值矛盾）写进备注；**干净表头零 API 调用**。配置：`config.yaml` 里的 `llm_base_url` + `llm_model`（或环境变量 `PDF_EXCEL_LLM_BASE_URL` / `PDF_EXCEL_LLM_MODEL`），密钥放环境变量 `PDF_EXCEL_LLM_API_KEY`。不想付费？免费模型（mimo-v2.6-flash-free、longcat、step-5 等）经本地 opencode CLI 网关调用，实测效果与 DeepSeek 相当。实测模型与花费见 [docs/smart-model-notes.md](docs/smart-model-notes.md)。
 
 不想跑解析、先看交付物长相：[`examples/demo_output/demo_sample/`](examples/demo_output/demo_sample/)
 
