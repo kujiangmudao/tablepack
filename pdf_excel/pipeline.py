@@ -12,6 +12,7 @@ from typing import Any
 
 from .clean import safe_filename
 from .config import Settings
+from .db_import import import_package as import_db_package, import_warehouse
 from .excel_writer import write_excel
 from .models import TableItem
 from .names import get_texts
@@ -153,6 +154,24 @@ def write_notes(
     return path
 
 
+def _attach_db(result: dict[str, Any], out_dir: Path, xlsx_path: Path, pdf_name: str) -> None:
+    """Optional additive step: xlsx → <stem>.db. Never raises."""
+    try:
+        db_info = import_db_package(
+            out_dir / f"{xlsx_path.stem}.db",
+            xlsx_path,
+            source_pdf=pdf_name,
+        )
+        result["db"] = db_info["db"]
+        result["db_tables"] = len(db_info["tables"])
+        result["db_rows"] = db_info["rows_imported"]
+        result["db_duplicates_removed"] = db_info["duplicates_removed"]
+        for s in db_info["skipped_sheets"]:
+            result["issues"].append(f"[db] skipped sheet {s['sheet']}: {s['reason']}")
+    except Exception as e:  # additive step must never break packaging
+        result["issues"].append(f"[db] import failed: {e}")
+
+
 def package_output(settings: Settings, pdf_path: Path, force_mineru: bool = False) -> dict[str, Any]:
     pdf_path = Path(pdf_path)
     stem = pdf_path.stem
@@ -178,6 +197,8 @@ def package_output(settings: Settings, pdf_path: Path, force_mineru: bool = Fals
         result["skipped"] = True
         result["out_dir"] = str(out_dir)
         result["issues"].append("skipped existing package (skip_existing_excel=true)")
+        if settings.import_db and not (out_dir / f"{stem}.db").exists():
+            _attach_db(result, out_dir, xlsx_path, pdf_path.name)
         return result
 
     auto_dir = find_auto_dir(settings, stem)
@@ -288,6 +309,9 @@ def package_output(settings: Settings, pdf_path: Path, force_mineru: bool = Fals
     excel_issues = write_excel(tables, xlsx_path, language=settings.output_language)
     result["issues"].extend(excel_issues)
 
+    if settings.import_db:
+        _attach_db(result, out_dir, xlsx_path, pdf_path.name)
+
     for t in tables:
         if t.issues:
             for iss in t.issues:
@@ -343,6 +367,26 @@ def run_batch(
         except Exception as e:
             traceback.print_exc()
             summary.append({"pdf": pdf.name, "ok": False, "issues": [str(e)]})
+
+    if settings.warehouse_db:
+        packages: list[tuple[str, Path]] = []
+        for r in summary:
+            out_dir = r.get("out_dir")
+            stem = r.get("stem")
+            if r.get("ok") and out_dir and stem:
+                xlsx = Path(out_dir) / f"{stem}.xlsx"
+                if xlsx.is_file():
+                    packages.append((str(r.get("pdf") or stem), xlsx))
+        try:
+            w = import_warehouse(settings.warehouse_db, packages)
+            wh_path = settings.output_dir / "_warehouse.json"
+            wh_path.write_text(json.dumps(w, ensure_ascii=False, indent=2), encoding="utf-8")
+            print(
+                f"Warehouse: {w['tables']} tables / {w['rows_imported']} rows -> {w['db']}",
+                flush=True,
+            )
+        except Exception as e:  # additive step must never break the batch
+            print(f"[warehouse] failed: {e}", flush=True)
 
     summary_path = settings.output_dir / "_summary.json"
     summary_path.write_text(json.dumps(summary, ensure_ascii=False, indent=2), encoding="utf-8")

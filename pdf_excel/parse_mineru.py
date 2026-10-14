@@ -6,11 +6,20 @@ from __future__ import annotations
 import json
 import re
 from pathlib import Path
+from typing import Any
 
 from bs4 import BeautifulSoup
 
 from .clean import clean_cell_text
 from .models import ImageItem, TableItem
+
+
+def _safe_int(value: Any, default: int = 0) -> int:
+    """Coerce JSON numbers like 3, "3" or "3.0" to int without crashing."""
+    try:
+        return int(float(str(value)))
+    except (TypeError, ValueError):
+        return default
 
 
 def find_content_list(auto_dir: Path) -> Path | None:
@@ -43,7 +52,7 @@ def parse_content_list(content_list_path: Path) -> tuple[list[TableItem], list[I
         if not isinstance(item, dict):
             continue
         typ = item.get("type")
-        page_idx = int(item.get("page_idx", 0) or 0)
+        page_idx = _safe_int(item.get("page_idx"))
         if typ == "table":
             t_idx += 1
             caps = item.get("table_caption") or []

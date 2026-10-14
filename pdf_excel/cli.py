@@ -50,6 +50,17 @@ def build_parser() -> argparse.ArgumentParser:
         help="Skip PDFs that already have output/<stem>/<stem>.xlsx",
     )
     p.add_argument(
+        "--import-db",
+        action="store_true",
+        help="After packaging, import each workbook into <stem>.db (SQLite, additive)",
+    )
+    p.add_argument(
+        "--warehouse",
+        type=Path,
+        default=None,
+        help="Aggregate all packaged workbooks of this run into one shared SQLite warehouse",
+    )
+    p.add_argument(
         "--dry-config",
         action="store_true",
         help="Print resolved config and exit",
@@ -83,6 +94,10 @@ def main(argv: list[str] | None = None) -> int:
         overrides["drop_empty_tables"] = False
     if args.skip_existing:
         overrides["skip_existing_excel"] = True
+    if args.import_db:
+        overrides["import_db"] = True
+    if args.warehouse:
+        overrides["warehouse_db"] = args.warehouse
 
     root = args.root or Path.cwd()
     settings = load_settings(root=root, config_path=args.config, overrides=overrides)

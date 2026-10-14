@@ -34,7 +34,11 @@ output/<stem>/
   ├── <stem>.xlsx
   ├── 原始表格/
   ├── 图片/
+  ├── <stem>.db               # optional (--import-db): SQLite data asset
   └── 转换说明.md | 问题说明.md
+    │
+    ├─ (optional) db_import: xlsx → SQLite (typing, provenance, dedup counts)
+    ├─ (optional) --warehouse: aggregate all packages → one shared SQLite DB
     │
     ▼
  Human / agent visual QC  →  fix sheets / amend notes
@@ -49,6 +53,7 @@ output/<stem>/
 | `html_table.py` | Expand HTML merges into a 2D grid |
 | `clean.py` | OCR / formula text normalization |
 | `excel_writer.py` | openpyxl multi-sheet workbook |
+| `db_import.py` | Optional xlsx → SQLite data asset (type inference, provenance, dedup counting) |
 | `pipeline.py` | Orchestrate MinerU, package, notes, summary |
 | `cli.py` | User-facing CLI |
 
@@ -79,5 +84,6 @@ Code cannot fully replace visual judgment on multi-level Chinese headers.
 
 - **`clean.OCR_REPLACEMENTS`**: domain normalizations
 - **`pipeline.write_notes`**: issue taxonomy / bilingual notes
+- **`db_import`**: shared warehouse aggregation (`--warehouse`) / custom schemas
 - **Post-hooks**: user scripts that rewrite specific sheets after package (keep private data out of git)
 - **Fallback extractors**: call img2table/Camelot only for failed tables (roadmap)

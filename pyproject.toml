@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "pdf-excel"
-version = "0.3.0"
+dynamic = ["version"]
 description = "TablePack: PDF tables to multi-sheet Excel packages with original table screenshots, QC notes, and agent skill (MinerU)"
 readme = "README.md"
 requires-python = ">=3.10"
@@ -48,6 +48,9 @@ MinerU = "https://github.com/opendatalab/MinerU"
 
 [tool.setuptools.packages.find]
 include = ["pdf_excel*"]
+
+[tool.setuptools.dynamic]
+version = { attr = "pdf_excel.__version__" }
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

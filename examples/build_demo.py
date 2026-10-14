@@ -2,8 +2,9 @@
 """Build a copyright-safe synthetic demo PDF + sample output packages (no MinerU required).
 
 Sample packages are generated through the real packaging modules
-(``pdf_excel.excel_writer`` / ``pdf_excel.pipeline.write_notes`` / ``pdf_excel.names``)
-so they always match actual output naming and note contents:
+(``pdf_excel.excel_writer`` / ``pdf_excel.pipeline.write_notes`` /
+``pdf_excel.db_import`` / ``pdf_excel.names``) so they always match actual
+output naming, note contents and the optional ``.db`` data asset:
 
   examples/demo_output/demo_sample/      output_language: zh (default)
   examples/demo_output/demo_sample_en/   output_language: en
@@ -135,6 +136,7 @@ def _write_crop(raw_dir: Path, filename: str) -> None:
 
 def build_sample_package(language: str) -> Path:
     """Generate one sample package through the real packaging modules."""
+    from pdf_excel.db_import import import_package as import_db_package
     from pdf_excel.excel_writer import write_excel
     from pdf_excel.models import TableItem
     from pdf_excel.names import get_texts
@@ -163,6 +165,11 @@ def build_sample_package(language: str) -> Path:
         bbox=None,
     )
     write_excel([table], out_dir / "demo_sample.xlsx", language=language)
+    import_db_package(
+        out_dir / "demo_sample.db",
+        out_dir / "demo_sample.xlsx",
+        source_pdf="demo_sample.pdf",
+    )
 
     notes_path = write_notes(
         out_dir,

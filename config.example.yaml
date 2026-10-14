@@ -34,6 +34,13 @@ drop_empty_tables: true   # drop empty table_body (do not invent rows)
 skip_existing_excel: false
 wipe_output_package: true # rebuild output/<stem>/ each run
 
+# Optional additive step: also build output/<stem>/<stem>.db (SQLite data asset)
+import_db: false
+
+# Optional: aggregate every package of a batch into one shared warehouse DB
+# (relative paths resolve against project root)
+# warehouse_db: output/_warehouse.db
+
 # Output naming & notes language: zh (default) | en
 # zh → 原始表格/, 图片/, 转换说明.md, 问题说明.md
 # en → table_crops/, images/, conversion_notes.md, issues.md

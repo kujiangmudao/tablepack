@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import html
 import re
+from unicodedata import east_asian_width
 
 # Order matters for some overlapping patterns.
 OCR_REPLACEMENTS: list[tuple[str, str]] = [
@@ -58,3 +59,11 @@ def safe_filename(name: str, max_len: int = 60) -> str:
     name = re.sub(r'[<>:"/\\|?*\s]+', "_", name or "untitled")
     name = re.sub(r"_+", "_", name).strip("._")
     return (name or "untitled")[:max_len]
+
+
+def display_width(text: str) -> int:
+    """Approximate display width: CJK / fullwidth glyphs count as 2 columns."""
+    width = 0
+    for ch in str(text):
+        width += 2 if east_asian_width(ch) in ("W", "F") else 1
+    return width

@@ -43,6 +43,7 @@ output/<PDF_STEM>/
   ├── <PDF_STEM>.xlsx
   ├── 原始表格/          # table screenshots (required)
   ├── 图片/              # non-table figures
+  ├── <PDF_STEM>.db      # optional: SQLite data asset (--import-db / import_db: true)
   └── 转换说明.md        # success
       or 问题说明.md     # fail / partial fail
 ```
@@ -75,6 +76,7 @@ output/<PDF_STEM>/
 ## Interaction defaults
 
 - “再转一批 / 继续转 / 新 PDF” → full pipeline + QC
+- “入库 / 存进数据库 / --import-db” → same pipeline; the `.db` is an additive data asset — still run visual QC on the Excel
 - Prefer incremental: reuse `work/mineru_raw/` when present, but **re-QC Excel**
 - Batch order: MinerU all → convert packages → per-table visual fix
 

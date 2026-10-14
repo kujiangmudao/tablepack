@@ -1,5 +1,32 @@
 # Changelog
 
+## 0.4.0 — 2026-10-14
+
+### Added
+
+- **Optional Excel → SQLite step** (`--import-db`, `import_db: true`, env `PDF_EXCEL_IMPORT_DB`): every package can additionally produce `<stem>.db`:
+  - one SQLite table per sheet; unambiguous numbers typed (`INTEGER` / `REAL`), everything else stays `TEXT`, blanks stay `NULL`
+  - provenance columns on every row: `_src_pdf`, `_src_sheet`, `_src_row`
+  - exact-duplicate data rows within a sheet are skipped **with counts reported** (never silent)
+  - `_meta` table with versions, source and totals
+- Batch summary entries gain `db`, `db_tables`, `db_rows`, `db_duplicates_removed` when the step is enabled
+- Standalone importer for existing packages: `python -m pdf_excel.db_import <xlsx> [--db PATH] [--source-pdf NAME]`
+- **Warehouse mode** (`--warehouse PATH` / `warehouse_db`): aggregate every workbook of a batch into one shared SQLite database — collision-free `<stem>__` table prefixes, idempotent per-package rebuild, stats in `output/_warehouse.json`
+- `_meta` now records `package` alongside `key`/`value` (supports multi-package warehouses)
+- Demo packages now ship with a ready-made `demo_sample.db`
+- `docs/demo-video-script.md`: record-ready demo scripts (README GIF + 3-minute walkthrough)
+- Tests: `tests/test_db_import.py`, `tests/test_parse_mineru.py`
+
+### Fixed
+
+- `parse_mineru`: `page_idx` values like `"3.0"` no longer crash parsing (safe numeric coercion)
+- `pipeline`: `--skip-existing` now still builds the optional `.db` for existing packages when `--import-db` is on and the db file is missing
+- `excel_writer`: column widths now account for East Asian glyph width (CJK cells no longer cramped)
+
+### Notes
+
+- Additive, off by default — existing outputs are unchanged.
+
 ## 0.3.0 — 2026-09-24
 
 ### Added

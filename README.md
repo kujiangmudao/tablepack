@@ -10,6 +10,7 @@ One command: drop in PDFs, get a review-ready Excel package · table-crop screen
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![powered by MinerU](https://img.shields.io/badge/powered%20by-MinerU-green.svg)](https://github.com/opendatalab/MinerU)
 [![Agent Skill](https://img.shields.io/badge/agent-skill-purple.svg)](skills/pdf-table-to-excel/SKILL.md)
+[![CI](https://github.com/kujiangmudao/tablepack/actions/workflows/ci.yml/badge.svg)](https://github.com/kujiangmudao/tablepack/actions/workflows/ci.yml)
 [![GitHub stars](https://img.shields.io/github/stars/kujiangmudao/tablepack?style=social)](https://github.com/kujiangmudao/tablepack/stargazers)
 
 [简体中文](README.zh-CN.md) · **English** (this page)
@@ -27,6 +28,7 @@ One command: drop in PDFs, get a review-ready Excel package · table-crop screen
 - **One PDF → one Excel**, one sheet per table
 - **Table-crop screenshots** saved next to every package — QC without extra tooling
 - Empty / broken tables → **written into notes, never invented data**
+- **Optional SQLite step** (`--import-db`): every package also becomes a typed, deduplicated `<stem>.db` data asset with row-level provenance
 - Ships with an [agent skill](skills/pdf-table-to-excel/SKILL.md): the same SOP for humans and agents
 
 ## Quick start
@@ -102,9 +104,14 @@ Then follow [Quick start](#quick-start) to run the demo. Full detail: [docs/INST
 | Force re-convert and overwrite | `python -m pdf_excel --force` |
 | Only convert files not yet converted | `python -m pdf_excel --skip-existing` |
 | Only files whose name contains a keyword | `python -m pdf_excel keyword` |
+| Also build a SQLite data asset | `python -m pdf_excel --import-db` |
+| Build `.db` for existing packages | `python -m pdf_excel.db_import output/<stem>/<stem>.xlsx` |
+| Aggregate a batch into one warehouse DB | `python -m pdf_excel --warehouse output/_warehouse.db` |
 | Check environment & config | `python -m pdf_excel --dry-config` |
 
 Each package folder contains **the workbook** (one sheet per table), **table-crop screenshots** for QC, **extracted images**, and **notes** (conversion notes, or an issues file when a table fails).
+
+With `--import-db` (or `import_db: true`), each package additionally contains `<stem>.db` — a SQLite database with one table per sheet (typed columns, `_src_*` provenance columns, exact-duplicate rows skipped with counts, and a `_meta` summary table). With `--warehouse PATH`, all packages of the run are additionally aggregated into one shared database (`<stem>__`-prefixed tables, same provenance and `_meta`).
 
 Folder/file names default to Chinese — set `output_language: en` in `config.yaml` to get English names (`table_crops/`, `images/`, `conversion_notes.md`, `issues.md`).
 

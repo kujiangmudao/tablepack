@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from pdf_excel.clean import clean_cell_text, safe_filename
+from pdf_excel.clean import clean_cell_text, display_width, safe_filename
 
 
 def test_oxide_cleanup():
@@ -11,3 +11,9 @@ def test_oxide_cleanup():
 def test_safe_filename():
     assert ":" not in safe_filename('表1: a/b')
     assert len(safe_filename("x" * 100)) <= 60
+
+
+def test_display_width():
+    assert display_width("abc") == 3
+    assert display_width("中文") == 4
+    assert display_width("a中") == 3

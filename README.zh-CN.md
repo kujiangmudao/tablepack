@@ -10,6 +10,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![powered by MinerU](https://img.shields.io/badge/powered%20by-MinerU-green.svg)](https://github.com/opendatalab/MinerU)
 [![Agent Skill](https://img.shields.io/badge/agent-skill-purple.svg)](skills/pdf-table-to-excel/SKILL.md)
+[![CI](https://github.com/kujiangmudao/tablepack/actions/workflows/ci.yml/badge.svg)](https://github.com/kujiangmudao/tablepack/actions/workflows/ci.yml)
 [![GitHub stars](https://img.shields.io/github/stars/kujiangmudao/tablepack?style=social)](https://github.com/kujiangmudao/tablepack/stargazers)
 
 **简体中文**（当前页） · [English](README.md)
@@ -27,6 +28,7 @@
 - **一个 PDF → 一个 Excel**，一表一 sheet
 - 同目录 **`原始表格/` 截图**，逐表核对不依赖任何工具
 - 空表 / 坏表**写进说明文件，绝不编造数据**
+- **可选 SQLite 步骤**（`--import-db`）：交付包同时生成带类型推断、去重计数、行级溯源的 `<stem>.db` 数据资产
 - 自带 [Agent Skill](skills/pdf-table-to-excel/SKILL.md)：人用、AI 用，同一套 SOP
 
 ## 快速开始
@@ -102,9 +104,14 @@ python -m pdf_excel --dry-config   # 检查环境与配置
 | 强制重转并覆盖旧结果 | `python -m pdf_excel --force` |
 | 只转还没转过的文件 | `python -m pdf_excel --skip-existing` |
 | 只处理文件名含关键词的 | `python -m pdf_excel 关键词` |
+| 同时生成 SQLite 数据资产 | `python -m pdf_excel --import-db` |
+| 给已有交付包补建 `.db` | `python -m pdf_excel.db_import output/<stem>/<stem>.xlsx` |
+| 汇总一批为仓库数据库 | `python -m pdf_excel --warehouse output/_warehouse.db` |
 | 检查环境与配置 | `python -m pdf_excel --dry-config` |
 
 每个交付包包含：**Excel 工作簿**（一表一 sheet）、**`原始表格/` 质检截图**、**提取的图片**、**说明文件**（转换说明，或表格失败时的问题说明）。
+
+加上 `--import-db`（或 `import_db: true`）后，每个交付包还会生成 `<stem>.db`——一个 SQLite 数据库：一 sheet 一张表（自动类型推断、`_src_*` 溯源列、精确重复行跳过并计数，以及 `_meta` 汇总表）。再加上 `--warehouse PATH`，本次批次的全部交付包会汇聚成一个共享数据库（表名带 `<stem>__` 前缀，附带同样的溯源列与 `_meta`）。
 
 输出目录 / 文件名默认中文；需要英文命名（`table_crops/`、`conversion_notes.md`、`issues.md`）时，在 `config.yaml` 里设置 `output_language: en`。
 

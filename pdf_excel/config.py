@@ -110,6 +110,12 @@ class Settings:
     skip_existing_excel: bool = False
     wipe_output_package: bool = True
 
+    # Optional additive step: import each workbook into <stem>.db (SQLite)
+    import_db: bool = False
+
+    # Optional: aggregate every package of a batch into one shared warehouse DB
+    warehouse_db: Path | None = None
+
     # Output naming / notes language: "zh" (default) | "en"
     output_language: str = "zh"
 
@@ -145,6 +151,9 @@ class Settings:
         self.drop_empty_tables = _coerce_bool(self.drop_empty_tables, True)
         self.skip_existing_excel = _coerce_bool(self.skip_existing_excel, False)
         self.wipe_output_package = _coerce_bool(self.wipe_output_package, True)
+        self.import_db = _coerce_bool(self.import_db, False)
+        if self.warehouse_db:
+            self.warehouse_db = _resolve_under_root(root, self.warehouse_db, None)
         self.output_language = normalize_language(self.output_language)
         return self
 
@@ -164,6 +173,8 @@ class Settings:
             "drop_empty_tables": self.drop_empty_tables,
             "skip_existing_excel": self.skip_existing_excel,
             "wipe_output_package": self.wipe_output_package,
+            "import_db": self.import_db,
+            "warehouse_db": str(self.warehouse_db) if self.warehouse_db else None,
             "output_language": self.output_language,
         }
 
@@ -217,6 +228,8 @@ def load_settings(
         s.mineru_bin = Path(raw["mineru_bin"])
     if raw.get("python_bin"):
         s.python_bin = Path(raw["python_bin"])
+    if raw.get("warehouse_db"):
+        s.warehouse_db = Path(raw["warehouse_db"])
     for key in ("backend", "method", "language"):
         if key in raw and raw[key] is not None:
             setattr(s, key, raw[key])
@@ -228,6 +241,7 @@ def load_settings(
         "drop_empty_tables",
         "skip_existing_excel",
         "wipe_output_package",
+        "import_db",
     ):
         if key in raw and raw[key] is not None:
             setattr(s, key, _coerce_bool(raw[key]))
@@ -251,13 +265,17 @@ def load_settings(
         s.language = os.environ["PDF_EXCEL_LANG"]
     if os.environ.get("PDF_EXCEL_OUTPUT_LANGUAGE"):
         s.output_language = os.environ["PDF_EXCEL_OUTPUT_LANGUAGE"]
+    if os.environ.get("PDF_EXCEL_IMPORT_DB") is not None:
+        s.import_db = _coerce_bool(os.environ.get("PDF_EXCEL_IMPORT_DB"))
+    if env_path("PDF_EXCEL_WAREHOUSE_DB"):
+        s.warehouse_db = env_path("PDF_EXCEL_WAREHOUSE_DB")
 
     # explicit overrides (CLI)
     if overrides:
         for k, v in overrides.items():
             if v is None:
                 continue
-            if k in ("root", "pdf_dir", "output_dir", "work_dir", "mineru_bin", "python_bin") and not isinstance(
+            if k in ("root", "pdf_dir", "output_dir", "work_dir", "mineru_bin", "python_bin", "warehouse_db") and not isinstance(
                 v, Path
             ):
                 v = Path(v)

@@ -10,7 +10,7 @@ from openpyxl import Workbook
 from openpyxl.styles import Alignment, Border, Font, Side
 from openpyxl.utils import get_column_letter
 
-from .clean import clean_cell_text
+from .clean import clean_cell_text, display_width
 from .html_table import html_table_to_grid
 from .models import TableItem
 from .names import get_texts
@@ -118,7 +118,7 @@ def write_excel(tables: list[TableItem], xlsx_path, language: str = "zh") -> lis
             for row in grid:
                 if c_i < len(row) and row[c_i]:
                     s = str(row[c_i])
-                    max_len = max(max_len, min(40, int(len(s) * 1.2) + 2))
+                    max_len = max(max_len, min(40, display_width(s) + 2))
             ws.column_dimensions[get_column_letter(c_i + 1)].width = max_len
 
         ws.sheet_properties.tabColor = "4472C4"
