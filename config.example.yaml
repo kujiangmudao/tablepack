@@ -41,6 +41,15 @@ import_db: false
 # (relative paths resolve against project root)
 # warehouse_db: output/_warehouse.db
 
+# Optional LLM smart layer: normalize merged / multi-level table headers into
+# one flat header row. Any OpenAI-compatible endpoint works (DeepSeek/GLM/Kimi/
+# local...). Enable with --smart or smart_enabled: true. The API key comes from
+# the environment (never commit it):
+#   set PDF_EXCEL_LLM_API_KEY=sk-...
+# smart_enabled: false
+# llm_base_url: https://api.deepseek.com/v1
+# llm_model: deepseek-chat
+
 # Output naming & notes language: zh (default) | en
 # zh → 原始表格/, 图片/, 转换说明.md, 问题说明.md
 # en → table_crops/, images/, conversion_notes.md, issues.md

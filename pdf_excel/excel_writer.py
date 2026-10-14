@@ -14,6 +14,7 @@ from .clean import clean_cell_text, display_width
 from .html_table import html_table_to_grid
 from .models import TableItem
 from .names import get_texts
+from .smart import SmartEnhancer
 
 
 def sanitize_sheet_name(name: str, used: set[str]) -> str:
@@ -38,7 +39,12 @@ def sanitize_sheet_name(name: str, used: set[str]) -> str:
     return name
 
 
-def write_excel(tables: list[TableItem], xlsx_path, language: str = "zh") -> list[str]:
+def write_excel(
+    tables: list[TableItem],
+    xlsx_path,
+    language: str = "zh",
+    smart: SmartEnhancer | None = None,
+) -> list[str]:
     """Write all tables into one workbook (one sheet per table)."""
     from pathlib import Path
 
@@ -68,6 +74,16 @@ def write_excel(tables: list[TableItem], xlsx_path, language: str = "zh") -> lis
     first = True
     for t in tables:
         grid, g_issues = html_table_to_grid(t.html_body)
+        if smart is not None:
+            grid, smart_issues = smart.enhance(grid, t.caption)
+            for w in smart_issues:
+                issues.append(
+                    texts["xlsx_table_issue"].format(
+                        i=t.index,
+                        caption=t.caption or texts["no_caption"],
+                        msg=f"smart: {w}",
+                    )
+                )
         t.issues.extend(g_issues)
         if g_issues:
             issues.append(

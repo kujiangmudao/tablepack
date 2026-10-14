@@ -61,6 +61,12 @@ def build_parser() -> argparse.ArgumentParser:
         help="Aggregate all packaged workbooks of this run into one shared SQLite warehouse",
     )
     p.add_argument(
+        "--smart",
+        action="store_true",
+        help="Normalize merged/multi-level table headers with an LLM "
+        "(needs llm_base_url + llm_model + env PDF_EXCEL_LLM_API_KEY; off by default)",
+    )
+    p.add_argument(
         "--dry-config",
         action="store_true",
         help="Print resolved config and exit",
@@ -98,6 +104,8 @@ def main(argv: list[str] | None = None) -> int:
         overrides["import_db"] = True
     if args.warehouse:
         overrides["warehouse_db"] = args.warehouse
+    if args.smart:
+        overrides["smart_enabled"] = True
 
     root = args.root or Path.cwd()
     settings = load_settings(root=root, config_path=args.config, overrides=overrides)

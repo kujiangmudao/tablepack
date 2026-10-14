@@ -29,6 +29,7 @@ One command: drop in PDFs, get a review-ready Excel package · table-crop screen
 - **Table-crop screenshots** saved next to every package — QC without extra tooling
 - Empty / broken tables → **written into notes, never invented data**
 - **Optional SQLite step** (`--import-db`): every package also becomes a typed, deduplicated `<stem>.db` data asset with row-level provenance
+- **Optional AI header cleanup** (`--smart`): merged / multi-level headers are flattened into one clear header row by any OpenAI-compatible model, with suspicious values reported in the notes — see [measured results & cost](docs/smart-model-notes.md)
 - Ships with an [agent skill](skills/pdf-table-to-excel/SKILL.md): the same SOP for humans and agents
 
 ## Quick start
@@ -107,6 +108,7 @@ Then follow [Quick start](#quick-start) to run the demo. Full detail: [docs/INST
 | Also build a SQLite data asset | `python -m pdf_excel --import-db` |
 | Build `.db` for existing packages | `python -m pdf_excel.db_import output/<stem>/<stem>.xlsx` |
 | Aggregate a batch into one warehouse DB | `python -m pdf_excel --warehouse output/_warehouse.db` |
+| Flatten messy headers with an LLM | `python -m pdf_excel --smart` |
 | Check environment & config | `python -m pdf_excel --dry-config` |
 
 Each package folder contains **the workbook** (one sheet per table), **table-crop screenshots** for QC, **extracted images**, and **notes** (conversion notes, or an issues file when a table fails).
@@ -114,6 +116,8 @@ Each package folder contains **the workbook** (one sheet per table), **table-cro
 With `--import-db` (or `import_db: true`), each package additionally contains `<stem>.db` — a SQLite database with one table per sheet (typed columns, `_src_*` provenance columns, exact-duplicate rows skipped with counts, and a `_meta` summary table). With `--warehouse PATH`, all packages of the run are additionally aggregated into one shared database (`<stem>__`-prefixed tables, same provenance and `_meta`).
 
 Folder/file names default to Chinese — set `output_language: en` in `config.yaml` to get English names (`table_crops/`, `images/`, `conversion_notes.md`, `issues.md`).
+
+With `--smart`, an OpenAI-compatible LLM flattens merged / multi-level headers into one clear row (e.g. `工业分析` + `Mad` → `工业分析_Mad`) and reports suspicious cells (OCR slips, inconsistent values) in the notes. Clean tables cost **zero** API calls. Setup: `llm_base_url` + `llm_model` in `config.yaml` (or env `PDF_EXCEL_LLM_BASE_URL` / `PDF_EXCEL_LLM_MODEL`), key in env `PDF_EXCEL_LLM_API_KEY`. Measured models & cost: [docs/smart-model-notes.md](docs/smart-model-notes.md).
 
 Inspect a sample package without running anything: [`examples/demo_output/demo_sample_en/`](examples/demo_output/demo_sample_en/)
 
@@ -157,6 +161,7 @@ tablepack / pdf_excel
 - [Install (Path A / B)](docs/INSTALL.md)
 - [QC checklist](docs/QC_CHECKLIST.md)
 - [Architecture](docs/ARCHITECTURE.md)
+- [Smart layer: models, results & cost](docs/smart-model-notes.md)
 - [Troubleshooting](docs/TROUBLESHOOTING.md)
 - [Contributing](CONTRIBUTING.md)
 

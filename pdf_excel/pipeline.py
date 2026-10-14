@@ -17,6 +17,18 @@ from .excel_writer import write_excel
 from .models import TableItem
 from .names import get_texts
 from .parse_mineru import find_content_list, parse_content_list, reindex_tables
+from .smart import OpenAICompatClient, SmartEnhancer
+
+# Marker used by excel_writer for LLM smart-layer notes. Those notes are shown
+# in the package notes file, but never flip a successful package to the
+# issues file (转换说明.md / conversion_notes.md must stay a success signal).
+_SMART_MARK = ": smart: "
+
+
+def _split_smart(issues: list[str]) -> tuple[list[str], list[str]]:
+    hard = [i for i in issues if _SMART_MARK not in i]
+    smart = [i for i in issues if _SMART_MARK in i]
+    return hard, smart
 
 
 def find_auto_dir(settings: Settings, pdf_stem: str) -> Path | None:
@@ -94,6 +106,7 @@ def write_notes(
     issues: list[str],
     dropped_empty: int = 0,
     language: str = "zh",
+    smart_notes: list[str] | None = None,
 ) -> Path:
     texts = get_texts(language)
     tables_dir = texts["tables_dir"]
@@ -150,6 +163,14 @@ def write_notes(
         md_lines.append(texts["notes_all_ok"].format(tables_dir=tables_dir))
         path = out_dir / texts["notes_file"]
 
+    if smart_notes:
+        md_lines.append("")
+        md_lines.append(texts["notes_smart_header"])
+        md_lines.append("")
+        for s in smart_notes:
+            md_lines.append(f"- {s}")
+        md_lines.append("")
+
     path.write_text("\n".join(md_lines), encoding="utf-8")
     return path
 
@@ -170,6 +191,30 @@ def _attach_db(result: dict[str, Any], out_dir: Path, xlsx_path: Path, pdf_name:
             result["issues"].append(f"[db] skipped sheet {s['sheet']}: {s['reason']}")
     except Exception as e:  # additive step must never break packaging
         result["issues"].append(f"[db] import failed: {e}")
+
+
+def _make_smart_enhancer(settings: Settings, issues: list[str]) -> SmartEnhancer | None:
+    """Optional additive step: normalize messy headers with an LLM. Never raises."""
+    if not settings.smart_enabled:
+        return None
+    missing = [
+        name
+        for name, value in (
+            ("llm_base_url", settings.llm_base_url),
+            ("llm_model", settings.llm_model),
+            ("PDF_EXCEL_LLM_API_KEY", settings.llm_api_key),
+        )
+        if not value
+    ]
+    if missing:
+        issues.append("[smart] disabled, missing config: " + ", ".join(missing))
+        return None
+    client = OpenAICompatClient(
+        base_url=settings.llm_base_url,
+        api_key=settings.llm_api_key,
+        model=settings.llm_model,
+    )
+    return SmartEnhancer(client)
 
 
 def package_output(settings: Settings, pdf_path: Path, force_mineru: bool = False) -> dict[str, Any]:
@@ -256,6 +301,7 @@ def package_output(settings: Settings, pdf_path: Path, force_mineru: bool = Fals
     result["tables"] = len(tables)
     result["images"] = len(images)
     result["dropped_empty"] = dropped
+    smart = _make_smart_enhancer(settings, result["issues"])
 
     if out_dir.exists() and settings.wipe_output_package:
         shutil.rmtree(out_dir)
@@ -306,8 +352,12 @@ def package_output(settings: Settings, pdf_path: Path, force_mineru: bool = Fals
             if imgf.is_file() and imgf.name not in used_srcs:
                 shutil.copy2(imgf, fig_dir / f"other_{imgf.name}")
 
-    excel_issues = write_excel(tables, xlsx_path, language=settings.output_language)
+    excel_issues = write_excel(
+        tables, xlsx_path, language=settings.output_language, smart=smart
+    )
     result["issues"].extend(excel_issues)
+    if smart is not None:
+        result["smart_tables"] = smart.enhanced_count
 
     if settings.import_db:
         _attach_db(result, out_dir, xlsx_path, pdf_path.name)
@@ -319,15 +369,17 @@ def package_output(settings: Settings, pdf_path: Path, force_mineru: bool = Fals
                 if tag not in result["issues"]:
                     result["issues"].append(tag)
 
+    hard_issues, smart_notes = _split_smart(result["issues"])
     write_notes(
         out_dir,
         stem,
         pdf_path.name,
         tables,
         len(images),
-        result["issues"],
+        hard_issues,
         dropped_empty=dropped,
         language=settings.output_language,
+        smart_notes=smart_notes,
     )
 
     result["ok"] = True

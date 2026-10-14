@@ -116,6 +116,12 @@ class Settings:
     # Optional: aggregate every package of a batch into one shared warehouse DB
     warehouse_db: Path | None = None
 
+    # Optional LLM smart layer: normalize merged/multi-level headers (off by default)
+    smart_enabled: bool = False
+    llm_base_url: str | None = None
+    llm_model: str | None = None
+    llm_api_key: str | None = None
+
     # Output naming / notes language: "zh" (default) | "en"
     output_language: str = "zh"
 
@@ -154,6 +160,11 @@ class Settings:
         self.import_db = _coerce_bool(self.import_db, False)
         if self.warehouse_db:
             self.warehouse_db = _resolve_under_root(root, self.warehouse_db, None)
+        self.smart_enabled = _coerce_bool(self.smart_enabled, False)
+        for attr in ("llm_base_url", "llm_model", "llm_api_key"):
+            value = getattr(self, attr)
+            if value:
+                setattr(self, attr, str(value).strip())
         self.output_language = normalize_language(self.output_language)
         return self
 
@@ -175,6 +186,10 @@ class Settings:
             "wipe_output_package": self.wipe_output_package,
             "import_db": self.import_db,
             "warehouse_db": str(self.warehouse_db) if self.warehouse_db else None,
+            "smart_enabled": self.smart_enabled,
+            "llm_base_url": self.llm_base_url,
+            "llm_model": self.llm_model,
+            "llm_api_key_set": bool(self.llm_api_key),
             "output_language": self.output_language,
         }
 
@@ -230,6 +245,9 @@ def load_settings(
         s.python_bin = Path(raw["python_bin"])
     if raw.get("warehouse_db"):
         s.warehouse_db = Path(raw["warehouse_db"])
+    for key in ("llm_base_url", "llm_model", "llm_api_key"):
+        if raw.get(key):
+            setattr(s, key, str(raw[key]))
     for key in ("backend", "method", "language"):
         if key in raw and raw[key] is not None:
             setattr(s, key, raw[key])
@@ -242,6 +260,7 @@ def load_settings(
         "skip_existing_excel",
         "wipe_output_package",
         "import_db",
+        "smart_enabled",
     ):
         if key in raw and raw[key] is not None:
             setattr(s, key, _coerce_bool(raw[key]))
@@ -269,6 +288,14 @@ def load_settings(
         s.import_db = _coerce_bool(os.environ.get("PDF_EXCEL_IMPORT_DB"))
     if env_path("PDF_EXCEL_WAREHOUSE_DB"):
         s.warehouse_db = env_path("PDF_EXCEL_WAREHOUSE_DB")
+    if os.environ.get("PDF_EXCEL_SMART") is not None:
+        s.smart_enabled = _coerce_bool(os.environ.get("PDF_EXCEL_SMART"))
+    if os.environ.get("PDF_EXCEL_LLM_BASE_URL"):
+        s.llm_base_url = os.environ["PDF_EXCEL_LLM_BASE_URL"]
+    if os.environ.get("PDF_EXCEL_LLM_MODEL"):
+        s.llm_model = os.environ["PDF_EXCEL_LLM_MODEL"]
+    if os.environ.get("PDF_EXCEL_LLM_API_KEY"):
+        s.llm_api_key = os.environ["PDF_EXCEL_LLM_API_KEY"]
 
     # explicit overrides (CLI)
     if overrides:

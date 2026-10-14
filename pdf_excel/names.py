@@ -38,6 +38,7 @@ _LANGUAGES: dict[str, dict[str, str]] = {
         "notes_mineru_empty": "- MinerU 未识别到 table 类型对象，或全部为空表。",
         "notes_limits_body": "> 表格由 MinerU 识别并结构还原。若单元格错位、合并表头不准或数值可疑，请对照 `{tables_dir}/` 截图人工核对并修改 xlsx。",
         "notes_all_ok": "本次自动转换未发现结构性失败。请仍对照 `{tables_dir}/` 做最终核验。",
+        "notes_smart_header": "## AI 修正备注（--smart）",
         # --- failure notes ---
         "fail_header": "## 失败原因",
         "fail_no_auto": "MinerU 未能解析该 PDF，未生成 auto 输出目录。",
@@ -97,6 +98,7 @@ _LANGUAGES: dict[str, dict[str, str]] = {
         "notes_mineru_empty": "- MinerU found no `table` objects, or all tables were empty.",
         "notes_limits_body": "> Tables are detected and reconstructed by MinerU. If a cell is misplaced, a merged header is wrong, or a value looks suspicious, verify against the `{tables_dir}/` screenshots and fix the xlsx by hand.",
         "notes_all_ok": "No structural failures were found in this automatic conversion. Still do a final check against `{tables_dir}/`.",
+        "notes_smart_header": "## AI smart-layer notes (--smart)",
         # --- failure notes ---
         "fail_header": "## Failure",
         "fail_no_auto": "MinerU could not parse this PDF — no auto output directory was produced.",

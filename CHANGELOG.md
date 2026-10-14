@@ -1,5 +1,19 @@
 # Changelog
 
+## 0.5.0 — 2026-10-14
+
+### Added
+
+- **Optional LLM smart layer** (`--smart`, `smart_enabled: true`, env `PDF_EXCEL_SMART`): normalizes merged / multi-level table headers into one flat header row using any OpenAI-compatible endpoint (`llm_base_url` + `llm_model` via config or env; key via env `PDF_EXCEL_LLM_API_KEY`; stdlib-only HTTP call). Clean tables cost **zero** API calls; any failure falls back to the raw grid
+- Smart notes (header repairs, OCR-error catches, data-quality warnings) are written into the package notes (`## AI 修正备注（--smart）` / `## AI smart-layer notes (--smart)`) and **never flip a successful package to `问题说明.md` / `issues.md`**; batch summary gains `smart_tables`
+- `docs/smart-model-notes.md`: measured results and cost per model (starts with DeepSeek)
+- Tests: `tests/test_smart.py`
+
+### Notes
+
+- Additive, off by default — existing outputs are unchanged.
+- Verified end-to-end on real cached geology papers: 6/6 eligible tables fixed; the model also caught an OCR error (`0` → `O`) and an inconsistent value.
+
 ## 0.4.0 — 2026-10-14
 
 ### Added

@@ -29,6 +29,7 @@
 - 同目录 **`原始表格/` 截图**，逐表核对不依赖任何工具
 - 空表 / 坏表**写进说明文件，绝不编造数据**
 - **可选 SQLite 步骤**（`--import-db`）：交付包同时生成带类型推断、去重计数、行级溯源的 `<stem>.db` 数据资产
+- **可选 AI 表头清洗**（`--smart`）：多级 / 合并表头由任意 OpenAI 兼容模型拉平成一行清晰表头，可疑数值写进备注——见[实测结果与花费](docs/smart-model-notes.md)
 - 自带 [Agent Skill](skills/pdf-table-to-excel/SKILL.md)：人用、AI 用，同一套 SOP
 
 ## 快速开始
@@ -107,6 +108,7 @@ python -m pdf_excel --dry-config   # 检查环境与配置
 | 同时生成 SQLite 数据资产 | `python -m pdf_excel --import-db` |
 | 给已有交付包补建 `.db` | `python -m pdf_excel.db_import output/<stem>/<stem>.xlsx` |
 | 汇总一批为仓库数据库 | `python -m pdf_excel --warehouse output/_warehouse.db` |
+| 用 LLM 拉平混乱表头 | `python -m pdf_excel --smart` |
 | 检查环境与配置 | `python -m pdf_excel --dry-config` |
 
 每个交付包包含：**Excel 工作簿**（一表一 sheet）、**`原始表格/` 质检截图**、**提取的图片**、**说明文件**（转换说明，或表格失败时的问题说明）。
@@ -114,6 +116,8 @@ python -m pdf_excel --dry-config   # 检查环境与配置
 加上 `--import-db`（或 `import_db: true`）后，每个交付包还会生成 `<stem>.db`——一个 SQLite 数据库：一 sheet 一张表（自动类型推断、`_src_*` 溯源列、精确重复行跳过并计数，以及 `_meta` 汇总表）。再加上 `--warehouse PATH`，本次批次的全部交付包会汇聚成一个共享数据库（表名带 `<stem>__` 前缀，附带同样的溯源列与 `_meta`）。
 
 输出目录 / 文件名默认中文；需要英文命名（`table_crops/`、`conversion_notes.md`、`issues.md`）时，在 `config.yaml` 里设置 `output_language: en`。
+
+加上 `--smart`，OpenAI 兼容模型会把多级 / 合并表头拉平成一行清晰表头（如 `工业分析` + `Mad` → `工业分析_Mad`），并把可疑单元格（OCR 笔误、数值矛盾）写进备注；**干净表头零 API 调用**。配置：`config.yaml` 里的 `llm_base_url` + `llm_model`（或环境变量 `PDF_EXCEL_LLM_BASE_URL` / `PDF_EXCEL_LLM_MODEL`），密钥放环境变量 `PDF_EXCEL_LLM_API_KEY`。实测模型与花费见 [docs/smart-model-notes.md](docs/smart-model-notes.md)。
 
 不想跑解析、先看交付物长相：[`examples/demo_output/demo_sample/`](examples/demo_output/demo_sample/)
 
@@ -153,6 +157,7 @@ tablepack / pdf_excel
 - [安装双路径](docs/INSTALL.md)
 - [质检清单](docs/QC_CHECKLIST.md)
 - [架构](docs/ARCHITECTURE.md)
+- [智能层：模型实测与花费](docs/smart-model-notes.md)
 - [排错指南](docs/TROUBLESHOOTING.md)
 - [贡献指南](CONTRIBUTING.md)
 

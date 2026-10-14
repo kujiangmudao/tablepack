@@ -16,6 +16,11 @@ When the user asks to convert PDFs, **always** follow this file + `skills/pdf-ta
 - **Quality control / sheet repair**: **requires a vision-capable model** that can open `原始表格/` screenshots (or PDF pages).
 - Text-only models: may run packaging, but **must not** claim visual QC was done.
 
+## Optional LLM smart layer (headers)
+
+- `--smart` / `smart_enabled: true` (plus `llm_base_url`, `llm_model`, env `PDF_EXCEL_LLM_API_KEY`): normalizes merged / multi-level headers into one flat header row via any OpenAI-compatible model.
+- **Additive and off by default**; any failure falls back to the raw grid. It **does not replace visual QC** — still check `原始表格/` screenshots.
+
 ## Environment
 
 Resolve paths via (in order): CLI flags → env vars → `config.yaml` → defaults.
