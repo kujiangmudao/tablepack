@@ -117,7 +117,7 @@ With `--import-db` (or `import_db: true`), each package additionally contains `<
 
 Folder/file names default to Chinese — set `output_language: en` in `config.yaml` to get English names (`table_crops/`, `images/`, `conversion_notes.md`, `issues.md`).
 
-With `--smart`, an OpenAI-compatible LLM flattens merged / multi-level headers into one clear row (e.g. `工业分析` + `Mad` → `工业分析_Mad`) and reports suspicious cells (OCR slips, inconsistent values) in the notes. Clean tables cost **zero** API calls. Setup: `llm_base_url` + `llm_model` in `config.yaml` (or env `PDF_EXCEL_LLM_BASE_URL` / `PDF_EXCEL_LLM_MODEL`), key in env `PDF_EXCEL_LLM_API_KEY`. No paid API? Free models (mimo-v2.6-flash-free, longcat, step-5, …) match DeepSeek's quality when routed through the local opencode CLI gateway. Measured models & cost: [docs/smart-model-notes.md](docs/smart-model-notes.md).
+With `--smart`, an OpenAI-compatible LLM flattens merged / multi-level headers into one clear row (e.g. `工业分析` + `Mad` → `工业分析_Mad`) and reports suspicious cells (OCR slips, inconsistent values) in the notes. Clean tables cost **zero** API calls. Setup: `llm_base_url` + `llm_model` in `config.yaml` (or env `PDF_EXCEL_LLM_BASE_URL` / `PDF_EXCEL_LLM_MODEL`), key in env `PDF_EXCEL_LLM_API_KEY`. No paid API? Free models (mimo-v2.6-flash-free, longcat, step-5, …) match DeepSeek's quality when routed through the local opencode CLI gateway. Measured models & cost: [docs/smart-model-notes.md](docs/smart-model-notes.md). Corpus-level evaluation: [docs/evaluation.md](docs/evaluation.md).
 
 Inspect a sample package without running anything: [`examples/demo_output/demo_sample_en/`](examples/demo_output/demo_sample_en/)
 
@@ -162,6 +162,7 @@ tablepack / pdf_excel
 - [QC checklist](docs/QC_CHECKLIST.md)
 - [Architecture](docs/ARCHITECTURE.md)
 - [Smart layer: models, results & cost](docs/smart-model-notes.md)
+- [Evaluation: 45-paper corpus & model comparison](docs/evaluation.md)
 - [Troubleshooting](docs/TROUBLESHOOTING.md)
 - [Contributing](CONTRIBUTING.md)
 

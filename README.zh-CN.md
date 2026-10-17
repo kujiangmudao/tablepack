@@ -117,7 +117,7 @@ python -m pdf_excel --dry-config   # 检查环境与配置
 
 输出目录 / 文件名默认中文；需要英文命名（`table_crops/`、`conversion_notes.md`、`issues.md`）时，在 `config.yaml` 里设置 `output_language: en`。
 
-加上 `--smart`，OpenAI 兼容模型会把多级 / 合并表头拉平成一行清晰表头（如 `工业分析` + `Mad` → `工业分析_Mad`），并把可疑单元格（OCR 笔误、数值矛盾）写进备注；**干净表头零 API 调用**。配置：`config.yaml` 里的 `llm_base_url` + `llm_model`（或环境变量 `PDF_EXCEL_LLM_BASE_URL` / `PDF_EXCEL_LLM_MODEL`），密钥放环境变量 `PDF_EXCEL_LLM_API_KEY`。不想付费？免费模型（mimo-v2.6-flash-free、longcat、step-5 等）经本地 opencode CLI 网关调用，实测效果与 DeepSeek 相当。实测模型与花费见 [docs/smart-model-notes.md](docs/smart-model-notes.md)。
+加上 `--smart`，OpenAI 兼容模型会把多级 / 合并表头拉平成一行清晰表头（如 `工业分析` + `Mad` → `工业分析_Mad`），并把可疑单元格（OCR 笔误、数值矛盾）写进备注；**干净表头零 API 调用**。配置：`config.yaml` 里的 `llm_base_url` + `llm_model`（或环境变量 `PDF_EXCEL_LLM_BASE_URL` / `PDF_EXCEL_LLM_MODEL`），密钥放环境变量 `PDF_EXCEL_LLM_API_KEY`。不想付费？免费模型（mimo-v2.6-flash-free、longcat、step-5 等）经本地 opencode CLI 网关调用，实测效果与 DeepSeek 相当。实测模型与花费见 [docs/smart-model-notes.md](docs/smart-model-notes.md)；语料级评测见 [docs/evaluation.md](docs/evaluation.md)。
 
 不想跑解析、先看交付物长相：[`examples/demo_output/demo_sample/`](examples/demo_output/demo_sample/)
 
@@ -158,6 +158,7 @@ tablepack / pdf_excel
 - [质检清单](docs/QC_CHECKLIST.md)
 - [架构](docs/ARCHITECTURE.md)
 - [智能层：模型实测与花费](docs/smart-model-notes.md)
+- [评测：45 篇语料与模型对照](docs/evaluation.md)
 - [排错指南](docs/TROUBLESHOOTING.md)
 - [贡献指南](CONTRIBUTING.md)
 
